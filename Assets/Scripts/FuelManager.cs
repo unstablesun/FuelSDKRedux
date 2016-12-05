@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class FuelManager : MonoBehaviour 
 {
 
+	#region ____________REGIONS______________
+	#endregion
 
 	static FuelManager s_instance;
 
@@ -60,12 +62,23 @@ public class FuelManager : MonoBehaviour
 
 
 
-
+	#region |        Event Message
 	void OnEnable()
 	{
 		FuelSDK.broadcastFuelSDKIgniteLoaded += onFuelSDKIgniteLoaded;
 		FuelSDK.broadcastFuelSDKIgniteEvents += onFuelSDKIgniteEvents;
 		FuelSDK.broadcastFuelSDKIgniteMission += onFuelSDKIgniteMission;
+
+		FuelSDK.broadcastFuelSDKVirtualGoodList += onFuelSDKVirtualGoodList;
+		FuelSDK.broadcastFuelSDKVirtualGoodRollback += onFuelSDKVirtualGoodRollback;
+		FuelSDK.broadcastFuelSDKVirtualGoodConsumeSuccess += onFuelSDKVirtualGoodConsumeSuccess;
+
+		FuelSDK.broadcastFuelSDKNotificationEnabled += onFuelSDKNotificationEnabled;
+		FuelSDK.broadcastFuelSDKNotificationDisabled += onFuelSDKNotificationDisabled;
+
+		FuelSDK.broadcastFuelSDKUserValues += onFuelSDKUserValues;
+
+
 	}
 
 	void OnDisable()
@@ -74,10 +87,18 @@ public class FuelManager : MonoBehaviour
 		FuelSDK.broadcastFuelSDKIgniteEvents -= onFuelSDKIgniteEvents;
 		FuelSDK.broadcastFuelSDKIgniteMission -= onFuelSDKIgniteMission;
 
+		FuelSDK.broadcastFuelSDKVirtualGoodList -= onFuelSDKVirtualGoodList;
+		FuelSDK.broadcastFuelSDKVirtualGoodRollback -= onFuelSDKVirtualGoodRollback;
+		FuelSDK.broadcastFuelSDKVirtualGoodConsumeSuccess -= onFuelSDKVirtualGoodConsumeSuccess;
+
+		FuelSDK.broadcastFuelSDKNotificationEnabled -= onFuelSDKNotificationEnabled;
+		FuelSDK.broadcastFuelSDKNotificationDisabled -= onFuelSDKNotificationEnabled;
+
 	}
+	#endregion
 
 
-	void onFuelSDKIgniteLoaded (string message) 
+	void onFuelSDKIgniteLoaded (Dictionary<string, object> data) 
 	{
 		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteLoaded (Fuel)");
 
@@ -86,6 +107,14 @@ public class FuelManager : MonoBehaviour
 
 
 
+
+
+	//------------------------------------------------------------------------------
+	/*
+	  									Ignite Events
+	*/
+	//------------------------------------------------------------------------------
+	#region |        Ignite Events
 	public enum IgniteEventType
 	{
 		none         	= -2,
@@ -95,7 +124,6 @@ public class FuelManager : MonoBehaviour
 		quest        	= 2,
 		offer        	= 3
 	}
-
 	void onFuelSDKIgniteEvents(Dictionary<string, object> data)
 	{
 		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteEvents (Fuel)");
@@ -195,9 +223,15 @@ public class FuelManager : MonoBehaviour
 		}
 
 	}
+	#endregion
 
 
-
+	//------------------------------------------------------------------------------
+	/*
+	  									Ignite Mission
+	*/
+	//------------------------------------------------------------------------------
+	#region |        Ignite Mission
 	void onFuelSDKIgniteMission(Dictionary<string, object> data)
 	{
 		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteMission (Fuel)");
@@ -242,6 +276,220 @@ public class FuelManager : MonoBehaviour
 
 
 	}
+	#endregion
 
 
+	//------------------------------------------------------------------------------
+	/*
+	  									Virtual Goods
+	*/
+	//------------------------------------------------------------------------------
+	#region |        Virtual Goods
+	void onFuelSDKVirtualGoodList(Dictionary<string, object> data)
+	{
+		object transactionIDObject;
+		bool keyExists = data.TryGetValue("transactionID", out transactionIDObject);
+
+		if (transactionIDObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
+			return;
+		}
+
+		if (!(transactionIDObject is string)) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
+			return;
+		}
+
+		string transactionID = (string)transactionIDObject;
+
+
+		object virtualGoodsObject;
+		keyExists = data.TryGetValue("virtualGoods", out virtualGoodsObject);
+
+		if (virtualGoodsObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected virtual goods list");
+			return;
+		}
+
+		List<object> virtualGoods = null;
+
+		try{
+
+			virtualGoods = virtualGoodsObject as List<object>;
+
+			if (virtualGoods == null) {
+				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name);
+				return;
+			}
+
+		}catch(Exception e){
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name + " error message : " + e.Message);
+			return;
+		}
+
+
+
+
+	}
+
+	void onFuelSDKVirtualGoodRollback(Dictionary<string, object> data)
+	{
+		object transactionIDObject;
+		bool keyExists = data.TryGetValue("transactionID", out transactionIDObject);
+
+		if (transactionIDObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
+			return;
+		}
+
+		if (!(transactionIDObject is string)) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
+			return;
+		}
+
+
+	}
+
+	void onFuelSDKVirtualGoodConsumeSuccess(Dictionary<string, object> data)
+	{
+		object transactionIDObject;
+		bool keyExists = data.TryGetValue("transactionID", out transactionIDObject);
+
+		if (transactionIDObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
+			return;
+		}
+
+		if (!(transactionIDObject is string)) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
+			return;
+		}
+	}
+	#endregion
+
+
+
+
+
+	//------------------------------------------------------------------------------
+	/*
+	  									Notifications
+	*/
+	//------------------------------------------------------------------------------
+	#region |        Notifications
+	public enum NotificationType
+	{
+		none 	= 0x0,
+		all 	= 0x3,
+		push 	= 1 << 0,
+		local 	= 1 << 1
+	}
+	void onFuelSDKNotificationEnabled(Dictionary<string, object> data)
+	{
+		object notificationTypeObject;
+		bool keyExists = data.TryGetValue("notificationType", out notificationTypeObject);
+
+		if (notificationTypeObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected notification type");
+			return;
+		}
+
+		if (!(notificationTypeObject is long)) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid notification type data type: " + notificationTypeObject.GetType ().Name);
+			return;
+		}
+
+		int notificationTypeValue = (int)((long)notificationTypeObject);
+
+		if (!Enum.IsDefined (typeof (NotificationType), notificationTypeValue)) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "unsuppported notification type value: " + notificationTypeValue.ToString ());
+			return;
+		}
+
+	}
+		
+	void onFuelSDKNotificationDisabled(Dictionary<string, object> data)
+	{
+
+		object notificationTypeObject;
+		bool keyExists = data.TryGetValue ("notificationType", out notificationTypeObject);
+
+		if (notificationTypeObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected notification type");
+			return;
+		}
+
+		if (!(notificationTypeObject is long)) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid notification type data type: " + notificationTypeObject.GetType ().Name);
+			return;
+		}
+
+		int notificationTypeValue = (int)((long)notificationTypeObject);
+
+		if (!Enum.IsDefined (typeof(NotificationType), notificationTypeValue)) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "unsuppported notification type value: " + notificationTypeValue.ToString ());
+			return;
+		}
+	}
+	#endregion
+
+
+
+	//------------------------------------------------------------------------------
+	/*
+	  									UserValues
+	*/
+	//------------------------------------------------------------------------------
+	#region |        UserValues
+		void onFuelSDKUserValues(Dictionary<string, object> data)
+	{
+
+		object conditionsObject;
+		bool keyExists = data.TryGetValue("dynamicConditions", out conditionsObject);
+
+		if (conditionsObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected dynamic conditions");
+			return;
+		}
+
+		Dictionary<string, object> conditions = null;
+
+		try{
+			conditions = conditionsObject as Dictionary<string, object>;
+
+			if (conditions == null) {
+				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid conditions data type: " + conditionsObject.GetType ().Name);
+				return;
+			}
+		}catch(Exception e){
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid conditions data type: " + conditionsObject.GetType ().Name + " error message : " + e.Message);
+			return;
+		}
+
+		object variablesObject;
+		keyExists = data.TryGetValue("variables", out variablesObject);
+
+		if (variablesObject == null || keyExists == false) {
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected dynamic variables");
+			return;
+		}
+
+		Dictionary<string, object> variables = null;
+
+		try{
+			variables = variablesObject as Dictionary<string, object>;
+
+			if (variables == null) {
+				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid variables data type: " + variablesObject.GetType ().Name);
+				return;
+			}
+		}catch(Exception e){
+			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid variables data type: " + variablesObject.GetType ().Name + " error message : " + e.Message);
+			return;
+		}
+
+	}
+	#endregion
+
+	
 }

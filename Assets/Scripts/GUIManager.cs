@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GUIManager : MonoBehaviour {
 
@@ -49,7 +50,7 @@ public class GUIManager : MonoBehaviour {
 	}
 
 
-	void onFuelSDKIgniteLoaded (string message) 
+	void onFuelSDKIgniteLoaded (Dictionary<string, object> data) 
 	{
 		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteLoaded(GUI)");
 	}
