@@ -53,4 +53,6 @@ public class GUIManager : MonoBehaviour {
 	{
 		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteLoaded(GUI)");
 	}
+
+
 }

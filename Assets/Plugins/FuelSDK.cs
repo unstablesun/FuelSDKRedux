@@ -1064,8 +1064,8 @@ public class FuelSDK : MonoBehaviour {
 	//Events
 
 	//fuelSDKIgniteLoaded
-	public delegate void protoFuelSDKIgniteLoaded(string message);
-	public static event protoFuelSDKIgniteLoaded broadcastFuelSDKIgniteLoaded;
+	public delegate void protofuelSDKIgniteLoaded(string message);
+	public static event protofuelSDKIgniteLoaded broadcastFuelSDKIgniteLoaded;
 
 	//fuelSDKIgniteEvents
 	public delegate void protofuelSDKIgniteEvents(Dictionary<string, object> data);
@@ -1074,6 +1074,27 @@ public class FuelSDK : MonoBehaviour {
 	//fuelSDKIgniteMission
 	public delegate void protofuelSDKIgniteMission(Dictionary<string, object> data);
 	public static event protofuelSDKIgniteMission broadcastFuelSDKIgniteMission;
+
+	//fuelSDKUICompetedExit
+	public delegate void protofuelSDKUICompetedExit();
+	public static event protofuelSDKUICompetedExit broadcastFuelSDKUICompetedExit;
+
+	//fuelSDKUICompetedFail
+	public delegate void protofuelSDKUICompetedFail(string reason);
+	public static event protofuelSDKUICompetedFail broadcastFuelSDKUICompetedFail;
+
+	//fuelSDKUICompetedMatch
+	public delegate void protofuelSDKUICompetedMatch(Dictionary<string, object> data);
+	public static event protofuelSDKUICompetedMatch broadcastFuelSDKUICompetedMatch;
+
+	//fuelSDKCompeteChallengeCount
+	public delegate void protofuelSDKCompeteChallengeCount(int count);
+	public static event protofuelSDKCompeteChallengeCount broadcastFuelSDKCompeteChallengeCount;
+
+	//fuelSDKCompeteTournamentInfo
+	public delegate void protofuelSDKCompeteTournamentInfo(Dictionary<string, string> data);
+	public static event protofuelSDKCompeteTournamentInfo broadcastFuelSDKCompeteTournamentInfo;
+
 
 	/// <summary>
 	/// Data Receiver
@@ -1431,21 +1452,26 @@ public class FuelSDK : MonoBehaviour {
 
 				int count = (int)((long)countObject);
 
+				broadcastFuelSDKCompeteChallengeCount (count);
+
 				//m_listener.OnCompeteChallengeCount (count);
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteTournamentInfo:
 			{
+				broadcastFuelSDKCompeteTournamentInfo (FuelSDKCommon.ToStringDictionary<string, object> (data));
 				//m_listener.OnCompeteTournamentInfo (FuelSDKCommon.ToStringDictionary<string, object> (data));
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteUICompletedExit:
 			{
+				broadcastFuelSDKUICompetedExit ();
 				//m_listener.OnCompeteUICompletedWithExit ();
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteUICompletedMatch:
 			{
+				broadcastFuelSDKUICompetedMatch (data);
 				//m_listener.OnCompeteUICompletedWithMatch (data);
 				break;
 			}
@@ -1466,6 +1492,8 @@ public class FuelSDK : MonoBehaviour {
 
 				string reason = (string)reasonObject;
 
+				broadcastFuelSDKUICompetedFail (reason);
+
 				//m_listener.OnCompeteUIFailed (reason);
 				break;
 			}
@@ -1476,6 +1504,7 @@ public class FuelSDK : MonoBehaviour {
 				}
 
 				broadcastFuelSDKIgniteEvents (data);
+
 				/*
 				object eventsObject;
 				keyExists = data.TryGetValue("events", out eventsObject);
