@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class ReduxGuiController : MonoBehaviour 
 {
+	public GameObject StartLineProxy;
 
 
 	private List <GameObject> TextLineObjects = null;
@@ -13,7 +14,7 @@ public class ReduxGuiController : MonoBehaviour
 	public static ReduxGuiController Instance;
 
 	private GameObject TextLinesContainer;
-	private const int objectPoolSize = 4;
+	private const int objectPoolSize = 20;
 
 
 	void Awake () 
@@ -43,14 +44,13 @@ public class ReduxGuiController : MonoBehaviour
 
 			_lineObj.name = "LineObj" + t.ToString ();
 
-			/*
-			Vector3 vRadius = Zenith.transform.position - CenterPoint.transform.position;
-			_tapObj.transform.position = new Vector3(Zenith.transform.position.x, Zenith.transform.position.y - vRadius.y * 2.0f, Zenith.transform.position.z);
 
-			TapObject tapObjectScript = _tapObj.GetComponent<TapObject> ();
-			tapObjectScript.SetCenterPoint (new Vector3(CenterPoint.transform.position.x, CenterPoint.transform.position.y, CenterPoint.transform.position.z));
-			tapObjectScript.SetZenithPoint (new Vector3(Zenith.transform.position.x, Zenith.transform.position.y, Zenith.transform.position.z));
-			*/
+			_lineObj.transform.position = new Vector3(StartLineProxy.transform.position.x, StartLineProxy.transform.position.y - ((float)t * 30.0f), StartLineProxy.transform.position.z);
+
+			//TapObject tapObjectScript = _tapObj.GetComponent<TapObject> ();
+			//tapObjectScript.SetCenterPoint (new Vector3(CenterPoint.transform.position.x, CenterPoint.transform.position.y, CenterPoint.transform.position.z));
+			//tapObjectScript.SetZenithPoint (new Vector3(Zenith.transform.position.x, Zenith.transform.position.y, Zenith.transform.position.z));
+
 
 			TextLineObjects.Add (_lineObj);
 		}
