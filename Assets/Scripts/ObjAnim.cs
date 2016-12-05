@@ -4,7 +4,7 @@ using System.Collections;
 public class ObjAnim : MonoBehaviour {
 
 
-	public float smoothing = 1f;
+	public float smoothing = 0.25f;
 	public Transform target;
 
 	// Use this for initialization
