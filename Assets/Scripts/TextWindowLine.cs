@@ -1,15 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
-public class TextWindowLine : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+public class TextWindowLine : MonoBehaviour 
+{
+
+	private Text textAccess;
+
+	void Start () 
+	{
 	
+		textAccess = GetComponent<Text>();
+
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 	
 	}
+
+	public void SetLineText (string lineText) 
+	{
+		if (textAccess != null) {
+			textAccess.text = lineText;
+		} else {
+			Debug.Log ("textAccess == null");
+
+		}
+
+	}
+
+
 }

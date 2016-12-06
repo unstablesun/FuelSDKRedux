@@ -32,14 +32,12 @@ public class ReduxGuiController : MonoBehaviour
 
 		for (int t = 0; t < objectPoolSize; t++) 
 		{
-			GameObject _lineObj = Instantiate (Resources.Load ("TextWindowLine1", typeof(GameObject))) as GameObject;
+			GameObject _lineObj = Instantiate (Resources.Load ("TextWindowLine", typeof(GameObject))) as GameObject;
 			//GameObject _tapObj = Instantiate (tapObjectPrefab) as GameObject;
 
 			Debug.Log ("TextLinesContainer = " + TextLinesContainer);
 			if (TextLinesContainer != null) {
 				_lineObj.transform.parent = TextLinesContainer.transform;
-			} else {
-			
 			}
 
 			_lineObj.name = "LineObj" + t.ToString ();
@@ -47,9 +45,12 @@ public class ReduxGuiController : MonoBehaviour
 
 			_lineObj.transform.position = new Vector3(StartLineProxy.transform.position.x, StartLineProxy.transform.position.y - ((float)t * 30.0f), StartLineProxy.transform.position.z);
 
-			//TapObject tapObjectScript = _tapObj.GetComponent<TapObject> ();
-			//tapObjectScript.SetCenterPoint (new Vector3(CenterPoint.transform.position.x, CenterPoint.transform.position.y, CenterPoint.transform.position.z));
-			//tapObjectScript.SetZenithPoint (new Vector3(Zenith.transform.position.x, Zenith.transform.position.y, Zenith.transform.position.z));
+			TextWindowLine lineObjectScript = _lineObj.GetComponent<TextWindowLine> ();
+			if (lineObjectScript != null) {
+				lineObjectScript.SetLineText (_lineObj.name);
+			} else {
+				Debug.Log ("lineObjectScript == null");
+			}
 
 
 			TextLineObjects.Add (_lineObj);
