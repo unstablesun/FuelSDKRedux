@@ -9,31 +9,39 @@ public class FuelManager : MonoBehaviour
 	#region ____________REGIONS______________
 	#endregion
 
-	static FuelManager s_instance;
+	//static FuelManager s_instance;
 
-	public static FuelManager Instance
-	{
-		get
-		{
-			return s_instance as FuelManager;
-		}
-	}
+	public static FuelManager Instance;
+
+	//public static FuelManager Instance
+	//{
+	//	get
+	//	{
+	//		return s_instance as FuelManager;
+	//	}
+	//}
 
 	void OnDestroy() 
 	{
-		s_instance = null;
+		Instance = null;
 	}
 
 
 	void Awake()
 	{
-		
+		Instance = this;
+
 	}
 
 
 	//Get Events
 	private IEnumerator getEventsCoroutine;
 	void Start () 
+	{
+	}
+
+
+	public void StartGetEventsCorroutine()
 	{
 		getEventsCoroutine = WaitAndGetEvents (4.0f);
 		StartCoroutine (getEventsCoroutine);
@@ -163,6 +171,9 @@ public class FuelManager : MonoBehaviour
 				string Id = Convert.ToString( eventDict["id"] );
 
 				Debug.Log ("    redux log ---- Event Id = " + Id);
+				string debugMessage = "redux log ---- Event Id = " + Id;
+
+				ReduxGuiController.Instance.addTextToWindow (debugMessage);
 			}
 				
 			if( eventDict.ContainsKey( "startTime" ) ) {
@@ -170,6 +181,10 @@ public class FuelManager : MonoBehaviour
 				long t = Convert.ToInt64 (eventDict["startTime"]);
 				DateTime StartTime = epoch.AddSeconds(t);
 				Debug.Log ("    redux log ---- StartTime = " + StartTime);
+
+				string debugMessage = "redux log ---- StartTime = " + StartTime;
+				ReduxGuiController.Instance.addTextToWindow (debugMessage);
+
 			}
 			if( eventDict.ContainsKey( "authorized" ) ) {
 				bool Authorized = Convert.ToBoolean( eventDict["authorized"] );

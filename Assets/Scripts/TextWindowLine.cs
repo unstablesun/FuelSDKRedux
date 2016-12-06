@@ -9,21 +9,27 @@ public class TextWindowLine : MonoBehaviour
 
 	public Text textAccess;
 
+
+	private int _lineIndex = 0;
+	public int lineIndex 
+	{
+		get {return _lineIndex; } 
+		set {_lineIndex = value; }
+	}
+
+
 	void Start () 
 	{
-	
-
 	}
 	
 	void Update () 
 	{
-	
 	}
 
 	public void SetLineText (string lineText) 
 	{
 		if (textAccess != null) {
-			Debug.Log ("textAccess =" + lineText);
+			//Debug.Log ("textAccess = " + lineText);
 			textAccess.text = lineText;
 		} else {
 			Debug.Log ("textAccess = null");
@@ -43,6 +49,8 @@ public class TextWindowLine : MonoBehaviour
 		}
 
 	}
+
+
 
 
 	//We are <b>absolutely <i>definitely</i> not</b> amused

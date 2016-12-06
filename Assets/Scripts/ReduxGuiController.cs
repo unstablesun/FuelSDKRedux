@@ -14,8 +14,9 @@ public class ReduxGuiController : MonoBehaviour
 	public static ReduxGuiController Instance;
 
 	private GameObject TextLinesContainer;
-	private const int objectPoolSize = 20;
+	private const int objectPoolSize = 22;
 
+	private int CurrentLineIndex = 0;
 
 	void Awake () 
 	{
@@ -26,14 +27,14 @@ public class ReduxGuiController : MonoBehaviour
 
 	void Start () 
 	{
-
 		TextLinesContainer = GameObject.Find ("TextLineWindow");
 
+		RectTransform rt = (RectTransform)StartLineProxy.transform;
+		float dy = rt.rect.height;
 
 		for (int t = 0; t < objectPoolSize; t++) 
 		{
 			GameObject _lineObj = Instantiate (Resources.Load ("TextLineObj", typeof(GameObject))) as GameObject;
-			//GameObject _tapObj = Instantiate (tapObjectPrefab) as GameObject;
 
 			Debug.Log ("TextLinesContainer = " + TextLinesContainer);
 			if (TextLinesContainer != null) {
@@ -43,23 +44,68 @@ public class ReduxGuiController : MonoBehaviour
 			_lineObj.name = "LineObj" + t.ToString ();
 
 
-			_lineObj.transform.position = new Vector3(StartLineProxy.transform.position.x, StartLineProxy.transform.position.y - ((float)t * 30.0f), StartLineProxy.transform.position.z);
+			_lineObj.transform.position = new Vector3(StartLineProxy.transform.position.x, StartLineProxy.transform.position.y - ((float)t * dy), StartLineProxy.transform.position.z);
 
 			TextWindowLine lineObjectScript = _lineObj.GetComponent<TextWindowLine> ();
 			if (lineObjectScript != null) {
-				lineObjectScript.SetFormattedLineText (_lineObj.name);
+				lineObjectScript.SetLineText (".");
+
+				lineObjectScript.lineIndex = t;
 			} else {
 				Debug.Log ("lineObjectScript == null");
 			}
-
-
+				
 			TextLineObjects.Add (_lineObj);
 		}
 
+
+		QueryLineObjectsClear ();
 	}
 	
 	void Update () 
 	{
 	
 	}
+
+	public void QueryLineObjectsClear() 
+	{
+		foreach(GameObject tObj in TextLineObjects)
+		{
+			TextWindowLine lineObjectScript = tObj.GetComponent<TextWindowLine> ();
+			lineObjectScript.SetLineText (".");
+		}
+
+		CurrentLineIndex = 0;
+	}
+		
+	public void onGetEventsButtonClick () 
+	{
+		FuelManager.Instance.StartGetEventsCorroutine ();
+	}
+
+
+
+	public void addTextToWindow (string text) 
+	{
+		QueryLineObjectsAddTextLine (text);
+	}
+
+	public void QueryLineObjectsAddTextLine(string text) 
+	{
+		foreach(GameObject tObj in TextLineObjects)
+		{
+			TextWindowLine lineObjectScript = tObj.GetComponent<TextWindowLine> ();
+
+			int index = lineObjectScript.lineIndex;
+			if (index == CurrentLineIndex) {
+				lineObjectScript.SetLineText (text);
+
+				CurrentLineIndex++;
+				break;
+			}
+		}
+	}
+
+
+
 }
