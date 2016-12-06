@@ -7,12 +7,11 @@ using UnityEngine.UI;
 public class TextWindowLine : MonoBehaviour 
 {
 
-	private Text textAccess;
+	public Text textAccess;
 
 	void Start () 
 	{
 	
-		textAccess = GetComponent<Text>();
 
 	}
 	
@@ -24,9 +23,10 @@ public class TextWindowLine : MonoBehaviour
 	public void SetLineText (string lineText) 
 	{
 		if (textAccess != null) {
+			Debug.Log ("textAccess =" + lineText);
 			textAccess.text = lineText;
 		} else {
-			Debug.Log ("textAccess == null");
+			Debug.Log ("textAccess = null");
 
 		}
 

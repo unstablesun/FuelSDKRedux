@@ -32,7 +32,7 @@ public class ReduxGuiController : MonoBehaviour
 
 		for (int t = 0; t < objectPoolSize; t++) 
 		{
-			GameObject _lineObj = Instantiate (Resources.Load ("TextWindowLine", typeof(GameObject))) as GameObject;
+			GameObject _lineObj = Instantiate (Resources.Load ("TextLineObj", typeof(GameObject))) as GameObject;
 			//GameObject _tapObj = Instantiate (tapObjectPrefab) as GameObject;
 
 			Debug.Log ("TextLinesContainer = " + TextLinesContainer);
