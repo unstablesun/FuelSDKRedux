@@ -32,5 +32,20 @@ public class TextWindowLine : MonoBehaviour
 
 	}
 
+	public void SetFormattedLineText (string lineText) 
+	{
+		if (textAccess != null) {
+			Debug.Log ("textAccess =" + lineText);
+			textAccess.text = lineText + "<color=#ff00ffff>" + lineText + "</Color>" + "...eol";
+		} else {
+			Debug.Log ("textAccess = null");
+
+		}
+
+	}
+
+
+	//We are <b>absolutely <i>definitely</i> not</b> amused
+
 
 }

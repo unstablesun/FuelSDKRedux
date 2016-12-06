@@ -47,7 +47,7 @@ public class ReduxGuiController : MonoBehaviour
 
 			TextWindowLine lineObjectScript = _lineObj.GetComponent<TextWindowLine> ();
 			if (lineObjectScript != null) {
-				lineObjectScript.SetLineText (_lineObj.name);
+				lineObjectScript.SetFormattedLineText (_lineObj.name);
 			} else {
 				Debug.Log ("lineObjectScript == null");
 			}
