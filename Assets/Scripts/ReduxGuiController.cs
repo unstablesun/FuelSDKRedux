@@ -27,7 +27,7 @@ public class ReduxGuiController : MonoBehaviour
 
 	void Start () 
 	{
-		TextLinesContainer = GameObject.Find ("TextLineWindow");
+		TextLinesContainer = GameObject.Find ("FuelPanel");
 
 		RectTransform rt = (RectTransform)StartLineProxy.transform;
 		float dy = rt.rect.height;
@@ -43,8 +43,10 @@ public class ReduxGuiController : MonoBehaviour
 
 			_lineObj.name = "LineObj" + t.ToString ();
 
-
 			_lineObj.transform.position = new Vector3(StartLineProxy.transform.position.x, StartLineProxy.transform.position.y - ((float)t * dy), StartLineProxy.transform.position.z);
+
+			//_lineObj.gameObject.
+			//_lineObj.transform.localScale = new Vector3(2, 1, 1);
 
 			TextWindowLine lineObjectScript = _lineObj.GetComponent<TextWindowLine> ();
 			if (lineObjectScript != null) {
