@@ -8,13 +8,16 @@ public class ReduxGuiController : MonoBehaviour
 {
 	public GameObject StartLineProxy;
 
+	public GameObject TopLineProxy;
 
-	private List <GameObject> TextLineObjects = null;
+	public List <GameObject> ListTextLineObjects;
+
+	//private List <GameObject> TextLineObjects = null;
 
 	public static ReduxGuiController Instance;
 
 	private GameObject TextLinesContainer;
-	private const int objectPoolSize = 22;
+	private const int objectPoolSize = 7;//22
 
 	private int CurrentLineIndex = 0;
 
@@ -22,31 +25,34 @@ public class ReduxGuiController : MonoBehaviour
 	{
 		Instance = this;
 
-		TextLineObjects = new List<GameObject>();
+		//TextLineObjects = new List<GameObject>();
 	}
 
 	void Start () 
 	{
-		TextLinesContainer = GameObject.Find ("FuelPanel");
+		//TextLinesContainer = GameObject.Find ("FuelPanel");
 
 		RectTransform rt = (RectTransform)StartLineProxy.transform;
 		float dy = rt.rect.height;
 
 		for (int t = 0; t < objectPoolSize; t++) 
 		{
-			GameObject _lineObj = Instantiate (Resources.Load ("TextLineObj", typeof(GameObject))) as GameObject;
+			//GameObject _lineObj = Instantiate (Resources.Load ("TextLineObj", typeof(GameObject))) as GameObject;
+			//GameObject _lineObj = Instantiate (TopLineProxy);
 
-			Debug.Log ("TextLinesContainer = " + TextLinesContainer);
-			if (TextLinesContainer != null) {
-				_lineObj.transform.parent = TextLinesContainer.transform;
-			}
+			//Debug.Log ("TextLinesContainer = " + TextLinesContainer);
+			//if (TextLinesContainer != null) {
+			//	_lineObj.transform.parent = TextLinesContainer.transform;
+			//}
 
-			_lineObj.name = "LineObj" + t.ToString ();
+			//_lineObj.name = "LineObj" + t.ToString ();
 
-			_lineObj.transform.position = new Vector3(StartLineProxy.transform.position.x, StartLineProxy.transform.position.y - ((float)t * dy), StartLineProxy.transform.position.z);
+			//_lineObj.transform.position = new Vector3(StartLineProxy.transform.position.x, StartLineProxy.transform.position.y - ((float)t * dy), StartLineProxy.transform.position.z);
 
 			//_lineObj.gameObject.
 			//_lineObj.transform.localScale = new Vector3(2, 1, 1);
+
+			GameObject _lineObj = ListTextLineObjects [t];
 
 			TextWindowLine lineObjectScript = _lineObj.GetComponent<TextWindowLine> ();
 			if (lineObjectScript != null) {
@@ -57,7 +63,7 @@ public class ReduxGuiController : MonoBehaviour
 				Debug.Log ("lineObjectScript == null");
 			}
 				
-			TextLineObjects.Add (_lineObj);
+			//TextLineObjects.Add (_lineObj);
 		}
 
 
@@ -71,7 +77,7 @@ public class ReduxGuiController : MonoBehaviour
 
 	public void QueryLineObjectsClear() 
 	{
-		foreach(GameObject tObj in TextLineObjects)
+		foreach(GameObject tObj in ListTextLineObjects)
 		{
 			TextWindowLine lineObjectScript = tObj.GetComponent<TextWindowLine> ();
 			lineObjectScript.SetLineText (".");
@@ -94,7 +100,7 @@ public class ReduxGuiController : MonoBehaviour
 
 	public void QueryLineObjectsAddTextLine(string text) 
 	{
-		foreach(GameObject tObj in TextLineObjects)
+		foreach(GameObject tObj in ListTextLineObjects)
 		{
 			TextWindowLine lineObjectScript = tObj.GetComponent<TextWindowLine> ();
 

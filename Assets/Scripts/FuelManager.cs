@@ -171,7 +171,7 @@ public class FuelManager : MonoBehaviour
 				string Id = Convert.ToString( eventDict["id"] );
 
 				Debug.Log ("    redux log ---- Event Id = " + Id);
-				string debugMessage = "redux log ---- Event Id = " + Id;
+				string debugMessage = "Event Id = " + Id;
 
 				ReduxGuiController.Instance.addTextToWindow (debugMessage);
 			}
@@ -182,7 +182,7 @@ public class FuelManager : MonoBehaviour
 				DateTime StartTime = epoch.AddSeconds(t);
 				Debug.Log ("    redux log ---- StartTime = " + StartTime);
 
-				string debugMessage = "redux log ---- StartTime = " + StartTime;
+				string debugMessage = "StartTime = " + StartTime;
 				ReduxGuiController.Instance.addTextToWindow (debugMessage);
 
 			}
