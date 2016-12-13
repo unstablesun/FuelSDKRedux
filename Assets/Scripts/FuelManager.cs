@@ -171,7 +171,7 @@ public class FuelManager : MonoBehaviour
 				string Id = Convert.ToString( eventDict["id"] );
 
 				Debug.Log ("    redux log ---- Event Id = " + Id);
-				string debugMessage = "Event Id = " + Id;
+				string debugMessage = "Activity Id = " + Id;
 
 				ReduxGuiController.Instance.addTextToWindow (debugMessage);
 			}
@@ -201,6 +201,8 @@ public class FuelManager : MonoBehaviour
 			if( eventDict.ContainsKey( "eventId" ) ) {
 				string EventId = Convert.ToString( eventDict["eventId"] );
 				Debug.Log ("    redux log ---- EventId = " + EventId);
+				string debugMessage = "Event Id = " + EventId;
+				ReduxGuiController.Instance.addTextToWindow (debugMessage);
 			}
 			if( eventDict.ContainsKey( "state" ) ) {
 				string State = Convert.ToString( eventDict["state"] );
@@ -215,6 +217,9 @@ public class FuelManager : MonoBehaviour
 				Debug.Log ("    redux log ---- Type = " + Type);
 
 				if (Type == IgniteEventType.mission) {
+
+					ReduxGuiController.Instance.addTextToWindow ("Type = mission");
+
 				
 					string missionId = Convert.ToString( eventDict["id"] );
 
@@ -228,6 +233,10 @@ public class FuelManager : MonoBehaviour
 				long t = Convert.ToInt64 (eventDict["endTime"]);
 				DateTime EndTime = epoch.AddSeconds(t);
 				Debug.Log ("    redux log ---- EndTime = " + EndTime);
+
+				string debugMessage = "EndTime = " + EndTime;
+				ReduxGuiController.Instance.addTextToWindow (debugMessage);
+
 			}
 			if( eventDict.ContainsKey( "metadata" ) ) {
 				Dictionary<string,object> eventMetadataDict = eventDict["metadata"] as Dictionary<string,object>;
@@ -280,6 +289,11 @@ public class FuelManager : MonoBehaviour
 
 			Debug.Log ("    redux log ---- Id = " + Id);
 
+
+			string debugMessage = "...onMission Id =  " + Id;
+			ReduxGuiController.Instance.addTextToWindow (debugMessage);
+
+
 		}
 
 		if( mission.ContainsKey( "progress" ) ) {
@@ -287,6 +301,8 @@ public class FuelManager : MonoBehaviour
 
 			Debug.Log ("    redux log ---- Progress = " + Progress);
 
+			string debugMessage = "...onMission Progress =  " + Progress;
+			ReduxGuiController.Instance.addTextToWindow (debugMessage);
 		}
 
 

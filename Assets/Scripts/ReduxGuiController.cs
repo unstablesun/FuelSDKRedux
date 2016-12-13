@@ -17,7 +17,7 @@ public class ReduxGuiController : MonoBehaviour
 	public static ReduxGuiController Instance;
 
 	private GameObject TextLinesContainer;
-	private const int objectPoolSize = 7;//22
+	private const int objectPoolSize = 11;//22
 
 	private int CurrentLineIndex = 0;
 
