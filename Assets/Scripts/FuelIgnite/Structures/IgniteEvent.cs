@@ -28,7 +28,7 @@ namespace FuelSDKIntegration.Structures
 		public IgniteEventType Type { get; set; }
 		public DateTime EndTime { get; set; }
 		//public IgniteActivityInterface activity;
-		//public IgniteEventMetadata Metadata { get; set; }
+		public IgniteEventMetadata Metadata { get; set; }
 		//public IgniteEventVisualData VisualData { get; set; }
 
 		public IgniteEvent() {
@@ -43,7 +43,7 @@ namespace FuelSDKIntegration.Structures
 			this.Type = IgniteEventType.none;
 			this.EndTime = DateTime.MinValue;
 			//this.activity = null;
-			//this.Metadata = new IgniteEventMetadata();
+			this.Metadata = new IgniteEventMetadata();
 			//this.VisualData = new IgniteEventVisualData( string.Empty );
 		}
 
@@ -84,8 +84,8 @@ namespace FuelSDKIntegration.Structures
 			}
 			if( eventDict.ContainsKey( "metadata" ) ) {
 				Dictionary<string,object> eventMetadataDict = eventDict["metadata"] as Dictionary<string,object>;
-				//this.Metadata = new IgniteEventMetadata();
-				//this.Metadata.Create( eventMetadataDict );
+				this.Metadata = new IgniteEventMetadata();
+				this.Metadata.Create( eventMetadataDict );
 			}
 
 			//this.activity = IgniteActivityFactory.GetActivity (this.Type);
@@ -163,6 +163,26 @@ namespace FuelSDKIntegration.Structures
 				return false;
 			}
 		}
+
+		public string RemainingEndTimeShortString {
+			get {
+				if( /*Completed && */ Ended ) {
+					return "";
+				}
+				return TimeUtility.RemainingTimeString( this.EndTime, TimeUtility.TimeStringType.HoursMinutesSeconds );
+			}
+		}
+
+		public string RemainingStartTimeShortString {
+			get {
+				if( /*Completed ||*/ Ended || Active ) {
+					return "";
+				}
+				return TimeUtility.RemainingTimeString( this.StartTime );
+			}
+		}
+
+
 		/*
 		public bool Completed {
 			get{
@@ -174,77 +194,7 @@ namespace FuelSDKIntegration.Structures
 		}
 		*/
 
-		/*
-		public bool Joined {
-			get{
-				if( joined && Active) {
-					return true;
-				}
-				if( this.Metadata != null ) {
-					if( this.Metadata.JoinedLeaderboard == this.Id ) {
-						return true;
-					}
-				}
-				return false;
-			}
-			set{
-				joined = value;
-			}
-		}
-
-		public bool CanJoinCascade {
-			get {
-				if( !Active ) {
-					return false;
-				}
-				if( string.IsNullOrEmpty( Metadata.CascadeId ) ) {
-					return false;
-				}
-				if( !string.IsNullOrEmpty( Metadata.JoinedLeaderboard ) ) {
-					if ((this.Id == Metadata.JoinedLeaderboard) && TimeUtility.TimeIsInThePast (StartTime) && TimeUtility.TimeIsInTheFuture (EndTime)) {
-						return true;
-					}
-					return false;
-				}
-
-				if( TimeUtility.TimeIsInThePast(StartTime) && TimeUtility.TimeIsInTheFuture( StartTime.AddSeconds( Metadata.CascadeInterval )) ) {
-					return true;
-				}
-				return false;
-			}
-		}
-		*/
 
 
-		/*
-		public string RemainingEndTimeShortString {
-			get {
-				if( Completed && Ended ) {
-					return "";
-				}
-				return TimeUtility.RemainingTimeString( this.EndTime, TimeUtility.TimeStringType.HoursMinutesSeconds );
-			}
-		}
-
-		public string RemainingStartTimeShortString {
-			get {
-				if( Completed || Ended || Active ) {
-					return "";
-				}
-				return TimeUtility.RemainingTimeString( this.StartTime );
-			}
-		}
-		//we need to save this everytime a event is finish
-		public bool WaitingOnPrizes() {
-			string waithingonprizes_id = GameSave.WaitingOnPrizes;
-			if(string.IsNullOrEmpty(waithingonprizes_id)){
-				return false;
-			}
-			if (waithingonprizes_id == Id) {
-				return true;
-			}
-			return false;
-		}
-		*/
 	}
 }

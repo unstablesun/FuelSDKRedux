@@ -5,11 +5,9 @@ namespace FuelSDKIntegration.Structures
 {
 	public class IgniteEventMetadata:Metadata 
 	{
-		//public string CascadeId { get; set; }
-		//public string JoinedLeaderboard { get; set; }
-		////public int JoinWindow { get; set; }
-		//public int CascadeInterval { get; set; }
-		//public int CascadeLength { get; set; }
+		public int SpecialCharacterId { get; set; }
+		public int UseCharaterId { get; set; }
+		public int SpecialOp{ get; set; }
 		public string imageUrl { get; set; }
 		public string ImageUrl { 
 			get {
@@ -32,10 +30,9 @@ namespace FuelSDKIntegration.Structures
 
 		public IgniteEventMetadata() {
 			this.Name = string.Empty;
-			//this.CascadeId = string.Empty;
-			//this.JoinedLeaderboard = string.Empty;
-			//this.CascadeInterval = 0;
-			//this.CascadeLength = 0;
+			this.SpecialOp = 0;
+			this.SpecialCharacterId = 0;
+			this.UseCharaterId = 0;
 			this.imageUrl = string.Empty;
 			this.imageMapUrl = string.Empty;
 		}
@@ -43,33 +40,18 @@ namespace FuelSDKIntegration.Structures
 		public override void Create ( Dictionary<string,object> metadataDict ) {
 			base.Create( metadataDict );
 
-			/*
-			if( metadataDict.ContainsKey( "cascadeId" ) ) {
-				this.CascadeId = Convert.ToString( metadataDict["cascadeId"] );
+			if( metadataDict.ContainsKey( "specialCharacterId" ) ) {
+				this.SpecialCharacterId = Convert.ToInt32( metadataDict["specialCharacterId"] );
+			}
+				
+			if( metadataDict.ContainsKey( "useCharacterId" ) ) {
+				this.UseCharaterId = Convert.ToInt32( metadataDict["useCharacterId"] );
 			}
 
-			if( metadataDict.ContainsKey( "joinedLeaderboard" ) ) {
-				if (!String.IsNullOrEmpty (Convert.ToString (metadataDict ["joinedLeaderboard"]))) {
-					this.JoinedLeaderboard = Convert.ToString (metadataDict ["joinedLeaderboard"]);
-				} else {
-					string joinedLB = GameSave.GetJoinedLeaderboard (this.CascadeId);
-					this.JoinedLeaderboard = joinedLB;
-				}
-
+			if( metadataDict.ContainsKey( "specialOp" ) ) {
+				this.SpecialOp = Convert.ToInt32( metadataDict["specialOp"] );
 			}
-			else {
-				string joinedLB = GameSave.GetJoinedLeaderboard (this.CascadeId);
-				this.JoinedLeaderboard = joinedLB;
-			}
-
-			if( metadataDict.ContainsKey( "cascadeInterval" ) ) {
-				this.CascadeInterval = Convert.ToInt32( metadataDict["cascadeInterval"] );
-			}
-
-			if( metadataDict.ContainsKey( "cascadeLength" ) ) {
-				this.CascadeLength = Convert.ToInt32( metadataDict["cascadeLength"] );
-			}
-			*/
+				
 			if( metadataDict.ContainsKey( "imageUrl" ) ) {
 				this.imageUrl = Convert.ToString( metadataDict["imageUrl"] );
 			}

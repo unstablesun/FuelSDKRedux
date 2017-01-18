@@ -102,10 +102,16 @@ public class FuelIgnite : MonoBehaviour
 			return;
 		}
 
+
+		List<IgniteEvent> completeEventList = new List<IgniteEvent> ();
+
+
 		foreach (object eventObj in eventList) {
 
 			IgniteEvent igniteEvent = new IgniteEvent ();
 			igniteEvent.Create (eventObj as Dictionary<string,object>);
+
+			completeEventList.Add (igniteEvent);
 
 			string label = "Id";
 			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Id);
@@ -115,13 +121,26 @@ public class FuelIgnite : MonoBehaviour
 			//ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.State);
 			//label = "Score";
 			//ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Score.ToString());
-			label = "StartTime";
-			ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.StartTime);
-			label = "EndTime";
-			ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.EndTime);
+			//label = "StartTime";
+			//ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.StartTime);
+			//label = "EndTime";
+			//ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.EndTime);
+
+			label = "Special Character";
+			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Metadata.SpecialCharacterId.ToString());
+
+			if (igniteEvent.ComingSoon == true) {
+				label = "Starting In";
+				ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingStartTimeShortString);
+			
+			} else {
+				label = "Ending In";
+				ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingEndTimeShortString);
+
+			}
 
 
-			FuelSDK.GetMission (igniteEvent.Id);
+			//FuelSDK.GetMission (igniteEvent.Id);
 
 
 		}
