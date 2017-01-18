@@ -1,0 +1,71 @@
+{"action": "fuelSDKIgniteMission" , "data" : {"success":true,"mission":{"metadata":{"name":"Grab Some Rings","virtualGood":{"iconUrl":"\/\/cdn.fuelpowered.com\/images\/66017318efa524e4a37c7cb45f5bb4b2_default.png","id":"53bdbcc4f3ee9a56e401fc46","description":"10 Red Star Rings","goodId":"rings_red_star_10"}},"id":"587ea8223158735db600fc20","rules":[{"variable":"RingsCollected","score":0,"kind":0,"id":"587ea8223158735db600fc1d","achieved":false,"target":"1000","metadata":{"name":"Collect 1000 Gold Rings","virtualGood":{"iconUrl":"\/\/cdn.fuelpowered.com\/images\/66017318efa524e4a37c7cb45f5bb4b2_default.png","id":"53bdbcc4f3ee9a56e401fc46","description":"10 Red Star Rings","goodId":"rings_red_star_10"}}},{"variable":"RingsCollected","score":0,"kind":0,"id":"587ea8223158735db600fc1e","achieved":false,"target":"2000","metadata":{"name":"Collect 2000 Gold Rings","virtualGood":{"iconUrl":"\/\/cdn.fuelpowered.com\/images\/9d3cb26071a9a28efeefc9242499a61d_default.png","id":"53bec88cf3ee9a3786020ec9","description":"50 Red Star Rings","goodId":"rings_red_star_50"}}},{"variable":"RingsCollected","score":0,"kind":0,"id":"587ea8223158735db600fc1f","achieved":false,"target":"5000","metadata":{"name":"Collect 5000 Gold Rings","virtualGood":{"iconUrl":"\/\/cdn.fuelpowered.com\/images\/9d3cb26071a9a28efeefc9242499a61d_default.png","id":"53bec88cf3ee9a3786020ec9","description":"50 Red Star Rings","goodId":"rings_red_star_50"}}}],"progress":-1}}}
+
+
+{
+	"action": "fuelSDKIgniteMission",
+	"data": {
+		"success": true,
+		"mission": {
+			"metadata": {
+				"name": "Grab Some Rings",
+				"virtualGood": {
+					"iconUrl": "\/\/cdn.fuelpowered.com\/images\/66017318efa524e4a37c7cb45f5bb4b2_default.png",
+					"id": "53bdbcc4f3ee9a56e401fc46",
+					"description": "10 Red Star Rings",
+					"goodId": "rings_red_star_10"
+				}
+			},
+			"id": "587ea8223158735db600fc20",
+			"rules": [{
+				"variable": "RingsCollected",
+				"score": 0,
+				"kind": 0,
+				"id": "587ea8223158735db600fc1d",
+				"achieved": false,
+				"target": "1000",
+				"metadata": {
+					"name": "Collect 1000 Gold Rings",
+					"virtualGood": {
+						"iconUrl": "\/\/cdn.fuelpowered.com\/images\/66017318efa524e4a37c7cb45f5bb4b2_default.png",
+						"id": "53bdbcc4f3ee9a56e401fc46",
+						"description": "10 Red Star Rings",
+						"goodId": "rings_red_star_10"
+					}
+				}
+			}, {
+				"variable": "RingsCollected",
+				"score": 0,
+				"kind": 0,
+				"id": "587ea8223158735db600fc1e",
+				"achieved": false,
+				"target": "2000",
+				"metadata": {
+					"name": "Collect 2000 Gold Rings",
+					"virtualGood": {
+						"iconUrl": "\/\/cdn.fuelpowered.com\/images\/9d3cb26071a9a28efeefc9242499a61d_default.png",
+						"id": "53bec88cf3ee9a3786020ec9",
+						"description": "50 Red Star Rings",
+						"goodId": "rings_red_star_50"
+					}
+				}
+			}, {
+				"variable": "RingsCollected",
+				"score": 0,
+				"kind": 0,
+				"id": "587ea8223158735db600fc1f",
+				"achieved": false,
+				"target": "5000",
+				"metadata": {
+					"name": "Collect 5000 Gold Rings",
+					"virtualGood": {
+						"iconUrl": "\/\/cdn.fuelpowered.com\/images\/9d3cb26071a9a28efeefc9242499a61d_default.png",
+						"id": "53bec88cf3ee9a3786020ec9",
+						"description": "50 Red Star Rings",
+						"goodId": "rings_red_star_50"
+					}
+				}
+			}],
+			"progress": -1
+		}
+	}
+}

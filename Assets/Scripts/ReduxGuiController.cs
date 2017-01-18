@@ -9,6 +9,7 @@ public class ReduxGuiController : MonoBehaviour
 	public GameObject StartLineProxy;
 	public GameObject TopLineProxy;
 	public List <GameObject> ListTextLineObjects;
+	public List <GameObject> ListMissionButtonObjects;
 	public static ReduxGuiController Instance;
 	private GameObject TextLinesContainer;
 	private int CurrentLineIndex = 0;
@@ -66,6 +67,16 @@ public class ReduxGuiController : MonoBehaviour
 	public void addTextToWindow (string text) 
 	{
 		QueryLineObjectsAddTextLine (text);
+	}
+	public void addLabelAndStringToWindow (string label, string data) 
+	{
+		string combine = label + " : " + data;
+		QueryLineObjectsAddTextLine (combine);
+	}
+	public void addLabelAndDateTimeToWindow (string label, DateTime time) 
+	{
+		string combine = label + " : " + time.ToLocalTime();
+		QueryLineObjectsAddTextLine (combine);
 	}
 
 	public void QueryLineObjectsAddTextLine(string text) 

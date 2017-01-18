@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FuelSDKIntegration.Structures;
 
 public class FuelManager : MonoBehaviour 
 {
@@ -31,6 +32,7 @@ public class FuelManager : MonoBehaviour
 	{
 		Instance = this;
 
+
 	}
 
 
@@ -38,6 +40,15 @@ public class FuelManager : MonoBehaviour
 	private IEnumerator getEventsCoroutine;
 	void Start () 
 	{
+
+		if (UnityEngine.iOS.NotificationServices.deviceToken != null) {
+			Debug.Log ("+====+ DAVES LOG: deviceToken exists!");
+		} else {
+			Debug.Log ("+====+ DAVES LOG: deviceToken exists!");
+		}
+
+		int numDisplayEvents = FuelIgnite.Instance.GetNumberOfDisplayEvents ();
+
 	}
 
 
@@ -74,8 +85,8 @@ public class FuelManager : MonoBehaviour
 	void OnEnable()
 	{
 		FuelSDK.broadcastFuelSDKIgniteLoaded += onFuelSDKIgniteLoaded;
-		FuelSDK.broadcastFuelSDKIgniteEvents += onFuelSDKIgniteEvents;
-		FuelSDK.broadcastFuelSDKIgniteMission += onFuelSDKIgniteMission;
+		//FuelSDK.broadcastFuelSDKIgniteEvents += onFuelSDKIgniteEvents;
+		//FuelSDK.broadcastFuelSDKIgniteMission += onFuelSDKIgniteMission;
 
 		FuelSDK.broadcastFuelSDKVirtualGoodList += onFuelSDKVirtualGoodList;
 		FuelSDK.broadcastFuelSDKVirtualGoodRollback += onFuelSDKVirtualGoodRollback;
@@ -92,8 +103,8 @@ public class FuelManager : MonoBehaviour
 	void OnDisable()
 	{
 		FuelSDK.broadcastFuelSDKIgniteLoaded -= onFuelSDKIgniteLoaded;
-		FuelSDK.broadcastFuelSDKIgniteEvents -= onFuelSDKIgniteEvents;
-		FuelSDK.broadcastFuelSDKIgniteMission -= onFuelSDKIgniteMission;
+		//FuelSDK.broadcastFuelSDKIgniteEvents -= onFuelSDKIgniteEvents;
+		//FuelSDK.broadcastFuelSDKIgniteMission -= onFuelSDKIgniteMission;
 
 		FuelSDK.broadcastFuelSDKVirtualGoodList -= onFuelSDKVirtualGoodList;
 		FuelSDK.broadcastFuelSDKVirtualGoodRollback -= onFuelSDKVirtualGoodRollback;
@@ -284,26 +295,21 @@ public class FuelManager : MonoBehaviour
 		}
 
 
-		if( mission.ContainsKey( "id" ) ) {
-			string Id = Convert.ToString( mission["id"] );
-
-			Debug.Log ("    redux log ---- Id = " + Id);
+		IgniteMission mIgniteMission = new IgniteMission ();
+		mIgniteMission.Create (data);
 
 
-			string debugMessage = "...onMission Id =  " + Id;
-			ReduxGuiController.Instance.addTextToWindow (debugMessage);
+
+		string debugMessage = "...onMission Id =  " + mIgniteMission.Id;
+		ReduxGuiController.Instance.addTextToWindow (debugMessage);
 
 
-		}
 
-		if( mission.ContainsKey( "progress" ) ) {
-			float Progress = (float)Math.Round( Convert.ToDouble(mission["progress"]), 2);
 
-			Debug.Log ("    redux log ---- Progress = " + Progress);
+		debugMessage = "...onMission Progress =  " + mIgniteMission.Progress;
+		ReduxGuiController.Instance.addTextToWindow (debugMessage);
 
-			string debugMessage = "...onMission Progress =  " + Progress;
-			ReduxGuiController.Instance.addTextToWindow (debugMessage);
-		}
+
 
 
 	}
