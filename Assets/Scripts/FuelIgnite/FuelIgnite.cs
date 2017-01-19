@@ -117,17 +117,17 @@ public class FuelIgnite : MonoBehaviour
 			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Id);
 			label = "EventId";
 			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.EventId);
-			//label = "State";
-			//ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.State);
-			//label = "Score";
-			//ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Score.ToString());
+			label = "State";
+			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.State);
+			label = "Score";
+			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Score.ToString());
 			//label = "StartTime";
 			//ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.StartTime);
 			//label = "EndTime";
 			//ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.EndTime);
 
-			label = "Special Character";
-			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Metadata.SpecialCharacterId.ToString());
+			//label = "Special Character";
+			//ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Metadata.SpecialCharacterId.ToString());
 
 			if (igniteEvent.ComingSoon == true) {
 				label = "Starting In";
@@ -135,7 +135,7 @@ public class FuelIgnite : MonoBehaviour
 			
 			} else {
 				label = "Ending In";
-				ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingEndTimeShortString);
+				ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingEndTimeLongString);
 
 			}
 
@@ -266,7 +266,7 @@ public class FuelIgnite : MonoBehaviour
 		ringsCollectedDict ["value"] = 100;
 		progressDict["RingsCollected"] = ringsCollectedDict;
 
-		//Rings Collected
+		//Red Rings Collected
 		Dictionary<string,int> redRingsCollectedDict = new Dictionary<string,int>();
 		redRingsCollectedDict ["value"] = 1;
 		progressDict["RedRingsCollected"] = redRingsCollectedDict;
@@ -289,5 +289,26 @@ public class FuelIgnite : MonoBehaviour
 	{
 		return 0;
 	}
+
+
+	private List<object> GetEventTags () {
+		List<object> tags = new List<object>();
+
+
+		tags.Add("UserLevel5");
+		//tags.Add("Beginner");
+
+
+		return tags;
+	}
+
+	public void GetAllEvents()
+	{
+		List<object> tags = GetEventTags();
+
+		FuelSDK.GetEvents (tags);
+	}
+
+
 		
 }

@@ -27,7 +27,7 @@ namespace FuelSDKIntegration.Structures
 		public float Score { get; set; }
 		public IgniteEventType Type { get; set; }
 		public DateTime EndTime { get; set; }
-		//public IgniteActivityInterface activity;
+		public IgniteActivityInterface activity;
 		public IgniteEventMetadata Metadata { get; set; }
 		//public IgniteEventVisualData VisualData { get; set; }
 
@@ -42,7 +42,7 @@ namespace FuelSDKIntegration.Structures
 			this.Score = 0f;
 			this.Type = IgniteEventType.none;
 			this.EndTime = DateTime.MinValue;
-			//this.activity = null;
+			this.activity = null;
 			this.Metadata = new IgniteEventMetadata();
 			//this.VisualData = new IgniteEventVisualData( string.Empty );
 		}
@@ -88,11 +88,11 @@ namespace FuelSDKIntegration.Structures
 				this.Metadata.Create( eventMetadataDict );
 			}
 
-			//this.activity = IgniteActivityFactory.GetActivity (this.Type);
-			//if( eventDict.ContainsKey( "typemetadata" ) ) {
-			//	Dictionary<string,object> activityMetadataDict = eventDict["typemetadata"] as Dictionary<string,object>;
-			//	this.activity.SetMetadata( activityMetadataDict );
-			//}
+			this.activity = IgniteActivityFactory.GetActivity (this.Type);
+			if( eventDict.ContainsKey( "typemetadata" ) ) {
+				Dictionary<string,object> activityMetadataDict = eventDict["typemetadata"] as Dictionary<string,object>;
+				this.activity.SetMetadata( activityMetadataDict );
+			}
 				
 			//this.VisualData = new IgniteEventVisualData( this.Id );
 		}
@@ -131,7 +131,7 @@ namespace FuelSDKIntegration.Structures
 		*/
 
 		public bool Active {
-			get{
+			get {
 				if( State != "active" ) {
 					return false;
 				}
@@ -146,7 +146,7 @@ namespace FuelSDKIntegration.Structures
 		}
 
 		public bool ComingSoon {
-			get{
+			get {
 				if(TimeUtility.TimeIsInTheFuture(StartTime)) {
 					return true;
 				}
@@ -155,7 +155,7 @@ namespace FuelSDKIntegration.Structures
 		}
 
 		public bool Ended {
-			get{
+			get {
 				if( TimeUtility.TimeIsInThePast( EndTime ) /* && !VisualData.VirtualGoodCollected */ ) {
 					return true;
 				}
@@ -164,9 +164,18 @@ namespace FuelSDKIntegration.Structures
 			}
 		}
 
+		public string RemainingEndTimeLongString {
+			get {
+				if( Completed &&  Ended ) {
+					return "";
+				}
+				return TimeUtility.RemainingTimeString( this.EndTime, TimeUtility.TimeStringType.Long );
+			}
+		}
+
 		public string RemainingEndTimeShortString {
 			get {
-				if( /*Completed && */ Ended ) {
+				if( Completed && Ended ) {
 					return "";
 				}
 				return TimeUtility.RemainingTimeString( this.EndTime, TimeUtility.TimeStringType.HoursMinutesSeconds );
@@ -175,7 +184,7 @@ namespace FuelSDKIntegration.Structures
 
 		public string RemainingStartTimeShortString {
 			get {
-				if( /*Completed ||*/ Ended || Active ) {
+				if( Completed || Ended || Active ) {
 					return "";
 				}
 				return TimeUtility.RemainingTimeString( this.StartTime );
@@ -183,16 +192,34 @@ namespace FuelSDKIntegration.Structures
 		}
 
 
-		/*
+
 		public bool Completed {
-			get{
+			get {
 				if( activity != null ) {
 					return activity.Completed();
 				}
 				return false;
 			}
 		}
-		*/
+
+
+
+
+		public bool IsSpecialCharaterEvent {
+			get {
+				if(Metadata.SpecialCharacterId > 0) {
+					return true;
+				}
+				return false;
+			}
+		}
+
+		public int SpecialCharaterId {
+			get {
+				return Metadata.SpecialCharacterId;
+			}
+		}
+
 
 
 
