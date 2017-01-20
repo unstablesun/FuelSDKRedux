@@ -61,7 +61,11 @@ public class ReduxGuiController : MonoBehaviour
 		
 	public void onGetEventsButtonClick () 
 	{
-		FuelManager.Instance.StartGetEventsCorroutine ();
+		FuelManager.Instance.GetCurrentIgniteList ();
+	}
+	public void onGetMissionsButtonClick () 
+	{
+		FuelManager.Instance.RequestMissionData ();
 	}
 		
 	public void addTextToWindow (string text) 

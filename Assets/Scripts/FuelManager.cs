@@ -7,20 +7,8 @@ using FuelSDKIntegration.Structures;
 public class FuelManager : MonoBehaviour 
 {
 
-	#region ____________REGIONS______________
-	#endregion
-
-	//static FuelManager s_instance;
-
 	public static FuelManager Instance;
 
-	//public static FuelManager Instance
-	//{
-	//	get
-	//	{
-	//		return s_instance as FuelManager;
-	//	}
-	//}
 
 	void OnDestroy() 
 	{
@@ -36,41 +24,14 @@ public class FuelManager : MonoBehaviour
 	}
 
 
-	//Get Events
-	private IEnumerator getEventsCoroutine;
 	void Start () 
 	{
 
-		if (UnityEngine.iOS.NotificationServices.deviceToken != null) {
-			Debug.Log ("+====+ DAVES LOG: deviceToken exists!");
-		} else {
-			Debug.Log ("+====+ DAVES LOG: deviceToken exists!");
-		}
-
-		int numDisplayEvents = FuelIgnite.Instance.GetNumberOfDisplayEvents ();
+		FuelIgnite.Instance.StartGetEventsCorroutine ();
 
 	}
 
 
-	public void StartGetEventsCorroutine()
-	{
-		getEventsCoroutine = WaitAndGetEvents (4.0f);
-		StartCoroutine (getEventsCoroutine);
-	}
-
-	public IEnumerator WaitAndGetEvents(float waitTime)
-	{
-		yield return new WaitForSeconds(waitTime);
-		FuelSDK.GetEvents (null);
-	}
-
-	//Get Missions
-	private IEnumerator getEventsMissions;
-	public IEnumerator WaitAndGetMissions(float waitTime, string missionID)
-	{
-		yield return new WaitForSeconds(waitTime);
-		FuelSDK.GetMission (missionID);
-	}
 
 
 	
@@ -81,40 +42,6 @@ public class FuelManager : MonoBehaviour
 
 
 
-	#region |        Event Message
-	void OnEnable()
-	{
-		FuelSDK.broadcastFuelSDKIgniteLoaded += onFuelSDKIgniteLoaded;
-		//FuelSDK.broadcastFuelSDKIgniteEvents += onFuelSDKIgniteEvents;
-		//FuelSDK.broadcastFuelSDKIgniteMission += onFuelSDKIgniteMission;
-
-		FuelSDK.broadcastFuelSDKVirtualGoodList += onFuelSDKVirtualGoodList;
-		FuelSDK.broadcastFuelSDKVirtualGoodRollback += onFuelSDKVirtualGoodRollback;
-		FuelSDK.broadcastFuelSDKVirtualGoodConsumeSuccess += onFuelSDKVirtualGoodConsumeSuccess;
-
-		FuelSDK.broadcastFuelSDKNotificationEnabled += onFuelSDKNotificationEnabled;
-		FuelSDK.broadcastFuelSDKNotificationDisabled += onFuelSDKNotificationDisabled;
-
-		FuelSDK.broadcastFuelSDKUserValues += onFuelSDKUserValues;
-
-
-	}
-
-	void OnDisable()
-	{
-		FuelSDK.broadcastFuelSDKIgniteLoaded -= onFuelSDKIgniteLoaded;
-		//FuelSDK.broadcastFuelSDKIgniteEvents -= onFuelSDKIgniteEvents;
-		//FuelSDK.broadcastFuelSDKIgniteMission -= onFuelSDKIgniteMission;
-
-		FuelSDK.broadcastFuelSDKVirtualGoodList -= onFuelSDKVirtualGoodList;
-		FuelSDK.broadcastFuelSDKVirtualGoodRollback -= onFuelSDKVirtualGoodRollback;
-		FuelSDK.broadcastFuelSDKVirtualGoodConsumeSuccess -= onFuelSDKVirtualGoodConsumeSuccess;
-
-		FuelSDK.broadcastFuelSDKNotificationEnabled -= onFuelSDKNotificationEnabled;
-		FuelSDK.broadcastFuelSDKNotificationDisabled -= onFuelSDKNotificationEnabled;
-
-	}
-	#endregion
 
 
 	void onFuelSDKIgniteLoaded (Dictionary<string, object> data) 
@@ -124,409 +51,84 @@ public class FuelManager : MonoBehaviour
 
 	}
 
-
-
-
-
-	//------------------------------------------------------------------------------
-	/*
-	  									Ignite Events
-	*/
-	//------------------------------------------------------------------------------
-	#region |        Ignite Events
-	public enum IgniteEventType
+	//triggered by ui button
+	public void RequestMissionData() 
 	{
-		none         	= -2,
-		noactivity      = -1,
-		leaderBoard 	= 0,
-		mission      	= 1,
-		quest        	= 2,
-		offer        	= 3
+
+		FuelIgnite.Instance.RequestAllMissionEventData ();
+
 	}
-	void onFuelSDKIgniteEvents(Dictionary<string, object> data)
+
+	//triggered by ui button
+	public void GetCurrentIgniteList () 
 	{
-		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteEvents (Fuel)");
-
-
-		object eventsObject;
-		bool keyExists = data.TryGetValue("events", out eventsObject);
-
-		if (eventsObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected event list");
-			return;
-		}
-
-		List<object> events = null;
-
-		try{
-			events = eventsObject as List<object>;
-
-			if (events == null) {
-				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid event list data type: " + eventsObject.GetType ().Name);
-				return;
-			}
-		}catch(Exception e){
-
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid event list data type: " + eventsObject.GetType ().Name + " error message : " + e.Message);
-			return;
-		}
-
-		//process events list
-		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteEvents (Fuel) : Process Event List");
-
-		foreach (object eventObject in events) {
 		
-			Dictionary<string,object> eventDict =  (eventObject as Dictionary<string,object>);
+		int numDisplayEvents = FuelIgnite.Instance.GetNumberOfActiveEvents ();
 
-			if( eventDict.ContainsKey( "id" ) ) {
-				string Id = Convert.ToString( eventDict["id"] );
-
-				Debug.Log ("    redux log ---- Event Id = " + Id);
-				string debugMessage = "Activity Id = " + Id;
-
-				ReduxGuiController.Instance.addTextToWindow (debugMessage);
-			}
-				
-			if( eventDict.ContainsKey( "startTime" ) ) {
-				var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-				long t = Convert.ToInt64 (eventDict["startTime"]);
-				DateTime StartTime = epoch.AddSeconds(t);
-				Debug.Log ("    redux log ---- StartTime = " + StartTime);
-
-				string debugMessage = "StartTime = " + StartTime;
-				ReduxGuiController.Instance.addTextToWindow (debugMessage);
-
-			}
-			if( eventDict.ContainsKey( "authorized" ) ) {
-				bool Authorized = Convert.ToBoolean( eventDict["authorized"] );
-				Debug.Log ("    redux log ---- Authorized = " + Authorized);
-			}
-			if( eventDict.ContainsKey( "achieved" ) ) {
-				bool Achieved = Convert.ToBoolean( eventDict["achieved"] );
-				Debug.Log ("    redux log ---- Achieved = " + Achieved);
-			}
-			if( eventDict.ContainsKey( "joined" ) ) {
-				bool joined = Convert.ToBoolean( eventDict["joined"] );
-				Debug.Log ("    redux log ---- joined = " + joined);
-			}
-			if( eventDict.ContainsKey( "eventId" ) ) {
-				string EventId = Convert.ToString( eventDict["eventId"] );
-				Debug.Log ("    redux log ---- EventId = " + EventId);
-				string debugMessage = "Event Id = " + EventId;
-				ReduxGuiController.Instance.addTextToWindow (debugMessage);
-			}
-			if( eventDict.ContainsKey( "state" ) ) {
-				string State = Convert.ToString( eventDict["state"] );
-				Debug.Log ("    redux log ---- State = " + State);
-			}
-			if( eventDict.ContainsKey( "score" ) ) {
-				double Score = (float)Convert.ToDouble( eventDict["score"] );
-				Debug.Log ("    redux log ---- Score = " + Score);
-			}
-			if( eventDict.ContainsKey( "type" ) ) {
-				IgniteEventType Type = (IgniteEventType) Enum.Parse( typeof(IgniteEventType) , Convert.ToString( eventDict["type"] ) );
-				Debug.Log ("    redux log ---- Type = " + Type);
-
-				if (Type == IgniteEventType.mission) {
-
-					ReduxGuiController.Instance.addTextToWindow ("Type = mission");
-
-				
-					string missionId = Convert.ToString( eventDict["id"] );
-
-					getEventsMissions = WaitAndGetMissions (1.0f, missionId);
-					StartCoroutine (getEventsMissions);
-
-				}
-			}
-			if( eventDict.ContainsKey( "endTime" ) ) {
-				var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-				long t = Convert.ToInt64 (eventDict["endTime"]);
-				DateTime EndTime = epoch.AddSeconds(t);
-				Debug.Log ("    redux log ---- EndTime = " + EndTime);
-
-				string debugMessage = "EndTime = " + EndTime;
-				ReduxGuiController.Instance.addTextToWindow (debugMessage);
-
-			}
-			if( eventDict.ContainsKey( "metadata" ) ) {
-				Dictionary<string,object> eventMetadataDict = eventDict["metadata"] as Dictionary<string,object>;
-			}
-
-
-		
-		}
-
-	}
-	#endregion
-
-
-	//------------------------------------------------------------------------------
-	/*
-	  									Ignite Mission
-	*/
-	//------------------------------------------------------------------------------
-	#region |        Ignite Mission
-	void onFuelSDKIgniteMission(Dictionary<string, object> data)
-	{
-		Debug.Log ("REDUX LOG -------- onFuelSDKIgniteMission (Fuel)");
-
-
-		object missionObject;
-		bool keyExists = data.TryGetValue ("mission", out missionObject);
-
-		if (missionObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected mission data");
-			return;
-		}
-
-		Dictionary<string, object> mission = null;
-
-		try {
-			mission = missionObject as Dictionary<string, object>;
-
-			if (mission == null) {
-				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid mission data type: " + missionObject.GetType ().Name);
-				return;
-			}
-		} catch (Exception e) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid mission data type: " + missionObject.GetType ().Name + " error message : " + e.Message);
-			return;
-		}
-
-
-		IgniteMission mIgniteMission = new IgniteMission ();
-		mIgniteMission.Create (data);
-
-
-
-		string debugMessage = "...onMission Id =  " + mIgniteMission.Id;
-		ReduxGuiController.Instance.addTextToWindow (debugMessage);
-
-
-
-
-		debugMessage = "...onMission Progress =  " + mIgniteMission.Progress;
-		ReduxGuiController.Instance.addTextToWindow (debugMessage);
-
-
-
-
-	}
-	#endregion
-
-
-	//------------------------------------------------------------------------------
-	/*
-	  									Virtual Goods
-	*/
-	//------------------------------------------------------------------------------
-	#region |        Virtual Goods
-	void onFuelSDKVirtualGoodList(Dictionary<string, object> data)
-	{
-		object transactionIDObject;
-		bool keyExists = data.TryGetValue("transactionID", out transactionIDObject);
-
-		if (transactionIDObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
-			return;
-		}
-
-		if (!(transactionIDObject is string)) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
-			return;
-		}
-
-		string transactionID = (string)transactionIDObject;
-
-
-		object virtualGoodsObject;
-		keyExists = data.TryGetValue("virtualGoods", out virtualGoodsObject);
-
-		if (virtualGoodsObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected virtual goods list");
-			return;
-		}
-
-		List<object> virtualGoods = null;
-
-		try{
-
-			virtualGoods = virtualGoodsObject as List<object>;
-
-			if (virtualGoods == null) {
-				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name);
-				return;
-			}
-
-		}catch(Exception e){
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name + " error message : " + e.Message);
-			return;
-		}
-
-
+		ReduxGuiController.Instance.addLabelAndStringToWindow ("Num Events Loaded", numDisplayEvents.ToString());
 
 
 	}
 
-	void onFuelSDKVirtualGoodRollback(Dictionary<string, object> data)
-	{
-		object transactionIDObject;
-		bool keyExists = data.TryGetValue("transactionID", out transactionIDObject);
 
-		if (transactionIDObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
-			return;
-		}
-
-		if (!(transactionIDObject is string)) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
-			return;
-		}
-
-
-	}
-
-	void onFuelSDKVirtualGoodConsumeSuccess(Dictionary<string, object> data)
-	{
-		object transactionIDObject;
-		bool keyExists = data.TryGetValue("transactionID", out transactionIDObject);
-
-		if (transactionIDObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
-			return;
-		}
-
-		if (!(transactionIDObject is string)) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
-			return;
-		}
-	}
-	#endregion
-
-
-
-
-
-	//------------------------------------------------------------------------------
-	/*
-	  									Notifications
-	*/
-	//------------------------------------------------------------------------------
-	#region |        Notifications
-	public enum NotificationType
-	{
-		none 	= 0x0,
-		all 	= 0x3,
-		push 	= 1 << 0,
-		local 	= 1 << 1
-	}
-	void onFuelSDKNotificationEnabled(Dictionary<string, object> data)
-	{
-		object notificationTypeObject;
-		bool keyExists = data.TryGetValue("notificationType", out notificationTypeObject);
-
-		if (notificationTypeObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected notification type");
-			return;
-		}
-
-		if (!(notificationTypeObject is long)) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid notification type data type: " + notificationTypeObject.GetType ().Name);
-			return;
-		}
-
-		int notificationTypeValue = (int)((long)notificationTypeObject);
-
-		if (!Enum.IsDefined (typeof (NotificationType), notificationTypeValue)) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "unsuppported notification type value: " + notificationTypeValue.ToString ());
-			return;
-		}
-
-	}
-		
-	void onFuelSDKNotificationDisabled(Dictionary<string, object> data)
+	void EventDebugPrint (IgniteEvent igniteEvent) 
 	{
 
-		object notificationTypeObject;
-		bool keyExists = data.TryGetValue ("notificationType", out notificationTypeObject);
 
-		if (notificationTypeObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected notification type");
-			return;
+
+		string label = "Id";
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Id);
+		label = "EventId";
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.EventId);
+		label = "State";
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.State);
+		label = "Score";
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Score.ToString());
+		//label = "StartTime";
+		//ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.StartTime);
+		//label = "EndTime";
+		//ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.EndTime);
+
+		//label = "Special Character";
+		//ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Metadata.SpecialCharacterId.ToString());
+
+		if (igniteEvent.ComingSoon == true) {
+			label = "Starting In";
+			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingStartTimeShortString);
+
+		} else {
+			label = "Ending In";
+			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingEndTimeLongString);
+
 		}
 
-		if (!(notificationTypeObject is long)) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid notification type data type: " + notificationTypeObject.GetType ().Name);
-			return;
-		}
 
-		int notificationTypeValue = (int)((long)notificationTypeObject);
-
-		if (!Enum.IsDefined (typeof(NotificationType), notificationTypeValue)) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "unsuppported notification type value: " + notificationTypeValue.ToString ());
-			return;
-		}
-	}
-	#endregion
+		//FuelSDK.GetMission (igniteEvent.Id);
 
 
 
-	//------------------------------------------------------------------------------
-	/*
-	  									UserValues
-	*/
-	//------------------------------------------------------------------------------
-	#region |        UserValues
-		void onFuelSDKUserValues(Dictionary<string, object> data)
-	{
 
-		object conditionsObject;
-		bool keyExists = data.TryGetValue("dynamicConditions", out conditionsObject);
+		/*
+		//Rules are effectively Sub Missions
+		Dictionary<string,IgniteMissionRuleData> SubMissions = igniteMission.Rules;
 
-		if (conditionsObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected dynamic conditions");
-			return;
-		}
+		if( SubMissions != null ) {
+			foreach( IgniteMissionRuleData missionRule in SubMissions.Values ) {
 
-		Dictionary<string, object> conditions = null;
+				//label = "sub_" + missionRule.Id;
+				//ReduxGuiController.Instance.addLabelAndStringToWindow (label, missionRule.Progress.ToString());
 
-		try{
-			conditions = conditionsObject as Dictionary<string, object>;
-
-			if (conditions == null) {
-				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid conditions data type: " + conditionsObject.GetType ().Name);
-				return;
 			}
-		}catch(Exception e){
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid conditions data type: " + conditionsObject.GetType ().Name + " error message : " + e.Message);
-			return;
 		}
-
-		object variablesObject;
-		keyExists = data.TryGetValue("variables", out variablesObject);
-
-		if (variablesObject == null || keyExists == false) {
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected dynamic variables");
-			return;
-		}
-
-		Dictionary<string, object> variables = null;
-
-		try{
-			variables = variablesObject as Dictionary<string, object>;
-
-			if (variables == null) {
-				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid variables data type: " + variablesObject.GetType ().Name);
-				return;
-			}
-		}catch(Exception e){
-			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid variables data type: " + variablesObject.GetType ().Name + " error message : " + e.Message);
-			return;
-		}
+		*/
 
 	}
-	#endregion
+
+
+
+
+
+
 
 	
 }

@@ -97,12 +97,13 @@ namespace FuelSDKIntegration.Structures
 			//this.VisualData = new IgniteEventVisualData( this.Id );
 		}
 
-		/*
 		public void LoadActivityData( Dictionary<string,object> dataDict ) {
 			if( this.activity != null ) {
 				this.activity.Create( dataDict );
 			}
 		}
+
+		/*
 
 		public bool GetVirtualGood() {
 			if( this.activity != null ) {

@@ -1116,6 +1116,9 @@ public class FuelSDK : MonoBehaviour {
 	public delegate void protofuelSDKCompeteTournamentInfo(Dictionary<string, string> data);
 	public static event protofuelSDKCompeteTournamentInfo broadcastFuelSDKCompeteTournamentInfo;
 
+	//fuelSDKCompeteTournamentInfo
+	public delegate void protofuelSDKLastRequestFailed(string errorMessage);
+	public static event protofuelSDKLastRequestFailed broadcastFuelSDKLastRequestFailed;
 
 	/// <summary>
 	/// Data Receiver
@@ -1130,6 +1133,7 @@ public class FuelSDK : MonoBehaviour {
 
 		if (message == null) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "received undefined message");
+			broadcastFuelSDKLastRequestFailed ("received undefined message");
 			return;
 		}
 
@@ -1137,6 +1141,7 @@ public class FuelSDK : MonoBehaviour {
 
 		if (messageObject == null) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "message could not be deserialized");
+			broadcastFuelSDKLastRequestFailed("message could not be deserialized");
 			return;
 		}
 
@@ -1148,11 +1153,13 @@ public class FuelSDK : MonoBehaviour {
 
 			if (messageDictionary == null) {
 				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, " message data type: " + messageObject.GetType ().Name);
+				broadcastFuelSDKLastRequestFailed(" message data type: " + messageObject.GetType ().Name);
 				return;
 			}
 
 		}catch(Exception e) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, " message data type: " + messageObject.GetType ().Name + " error message : " + e.Message);
+			broadcastFuelSDKLastRequestFailed(" message data type: " + messageObject.GetType ().Name + " error message : " + e.Message);
 			return;
 		}
 
@@ -1161,11 +1168,13 @@ public class FuelSDK : MonoBehaviour {
 
 		if (actionObject == null || keyExists == false) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "received undefined action for message: " + message);
+			broadcastFuelSDKLastRequestFailed("received undefined action for message: " + message);
 			return;
 		}
 
 		if (!(actionObject is string)) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid action data type: " + actionObject.GetType ().Name);
+			broadcastFuelSDKLastRequestFailed("invalid action data type: " + actionObject.GetType ().Name);
 			return;
 		}
 
@@ -1174,6 +1183,7 @@ public class FuelSDK : MonoBehaviour {
 
 		if (!FuelSDKCommon.TryParseEnum<DataReceiverAction> (action, out dataReceiverAction)) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "unsupported action: " + action);
+			broadcastFuelSDKLastRequestFailed("unsupported action: " + action);
 			return;
 		}
 
@@ -1182,6 +1192,7 @@ public class FuelSDK : MonoBehaviour {
 
 		if (dataObject == null || keyExists == false) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "no specific data in the response object for action: " + action);
+			broadcastFuelSDKLastRequestFailed("no specific data in the response object for action: " + action);
 			return;
 		}
 
@@ -1193,11 +1204,13 @@ public class FuelSDK : MonoBehaviour {
 
 			if (data == null) {
 				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid data data type" + dataObject.GetType ().Name);
+				broadcastFuelSDKLastRequestFailed("invalid data data type" + dataObject.GetType ().Name);
 				return;
 			}
 
 		}catch(Exception e){
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid data data type" + dataObject.GetType ().Name + " error message : " + e.Message);
+			broadcastFuelSDKLastRequestFailed("invalid data data type" + dataObject.GetType ().Name + " error message : " + e.Message);
 			return;
 		}
 
@@ -1205,6 +1218,7 @@ public class FuelSDK : MonoBehaviour {
 
 		if (dataString == null) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "data could not be serialized");
+			broadcastFuelSDKLastRequestFailed("data could not be serialized");
 			return;
 		}
 
@@ -1220,95 +1234,17 @@ public class FuelSDK : MonoBehaviour {
 			}
 		case DataReceiverAction.fuelSDKVirtualGoodList:
 			{
-				/*
-				object transactionIDObject;
-				keyExists = data.TryGetValue("transactionID", out transactionIDObject);
-
-				if (transactionIDObject == null || keyExists == false) {
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
-					break;
-				}
-
-				if (!(transactionIDObject is string)) {
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
-					break;
-				}
-
-				string transactionID = (string)transactionIDObject;
-
-
-				object virtualGoodsObject;
-				keyExists = data.TryGetValue("virtualGoods", out virtualGoodsObject);
-
-				if (virtualGoodsObject == null || keyExists == false) {
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected virtual goods list");
-					break;
-				}
-
-				List<object> virtualGoods = null;
-
-				try{
-
-					virtualGoods = virtualGoodsObject as List<object>;
-
-					if (virtualGoods == null) {
-						FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name);
-						break;
-					}
-
-				}catch(Exception e){
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name + " error message : " + e.Message);
-					break;
-				}
-				*/
-
 				broadcastFuelSDKVirtualGoodList (data);
-
-				//m_listener.OnVirtualGoodList (transactionID, virtualGoods);
 				break;
 			}
 		case DataReceiverAction.fuelSDKVirtualGoodRollback:
 			{
-				/*
-				object transactionIDObject;
-				keyExists = data.TryGetValue("transactionID", out transactionIDObject);
-
-				if (transactionIDObject == null || keyExists == false) {
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
-					break;
-				}
-
-				if (!(transactionIDObject is string)) {
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
-					break;
-				}
-				*/
-
 				broadcastFuelSDKVirtualGoodRollback (data);
-
-				//m_listener.OnVirtualGoodRollback ((string)transactionIDObject);
 				break;
 			}
 		case DataReceiverAction.fuelSDKVirtualGoodConsumeSuccess:
 			{
-				/*
-				object transactionIDObject;
-				keyExists = data.TryGetValue("transactionID", out transactionIDObject);
-
-				if (transactionIDObject == null || keyExists == false) {
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
-					break;
-				}
-
-				if (!(transactionIDObject is string)) {
-					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
-					break;
-				}
-				*/
-
 				broadcastFuelSDKVirtualGoodConsumeSuccess (data);
-
-				//m_listener.OnVirtualGoodConsumeSuccess ((string)transactionIDObject);
 				break;	
 			}
 		case DataReceiverAction.fuelSDKNotificationEnabled:
