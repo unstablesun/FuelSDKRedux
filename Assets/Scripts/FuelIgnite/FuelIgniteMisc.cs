@@ -5,15 +5,13 @@ using System.Collections.Generic;
 using FuelSDKIntegration.Structures;
 
 
+//-----------------------------------------------------------------
+/*
+	  						IGNITE MISC
+*/
+//-----------------------------------------------------------------
 public partial class FuelIgnite : MonoBehaviour
 {
-	//-----------------------------------------------------------------
-	/*
-	  							IGNITE MISC
-	*/
-	//-----------------------------------------------------------------
-
-
 
 	public enum NotificationType
 	{

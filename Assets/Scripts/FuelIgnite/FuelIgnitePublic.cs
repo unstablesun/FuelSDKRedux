@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using FuelSDKIntegration.Structures;
 
 
+//-----------------------------------------------------------------
+/*
+	  						PUBLIC INTERFACE
+*/
+//-----------------------------------------------------------------
 public partial class FuelIgnite : MonoBehaviour
 {
-	//-----------------------------------------------------------------
-	/*
-	  							PUBLIC INTERFACE
-	*/
-	//-----------------------------------------------------------------
 
 	public List<IgniteEvent> GetActiveEventList {
 		get {

@@ -60,21 +60,42 @@ public class FuelManager : MonoBehaviour
 	}
 
 	//triggered by ui button
-	public void GetCurrentIgniteList () 
+	public void DisplayCurrentIgniteData () 
 	{
 		
 		int numDisplayEvents = FuelIgnite.Instance.GetNumberOfActiveEvents ();
 
 		ReduxGuiController.Instance.addLabelAndStringToWindow ("Num Events Loaded", numDisplayEvents.ToString());
 
+		List<IgniteEvent> igniteEventList = FuelIgnite.Instance.GetActiveEventList;
+		for (int i = 0; i < igniteEventList.Count; i++) {
+			EventDebugPrint (igniteEventList[i]);
+		}
+	}
+
+	//triggered by ui button
+	public void DisplayCurrentMissionData () 
+	{
+		int numDisplayEvents = FuelIgnite.Instance.GetNumberOfActiveEvents ();
+
+		ReduxGuiController.Instance.addLabelAndStringToWindow ("Num Events Loaded", numDisplayEvents.ToString());
+
+
+
+		List<IgniteEvent> igniteEventList = FuelIgnite.Instance.GetActiveEventList;
+
+		for (int i = 0; i < igniteEventList.Count; i++) {
+
+			IgniteMission igniteMission = igniteEventList [i].activity as IgniteMission;
+				
+			MissionDebugPrint (igniteMission);
+		}
 
 	}
 
 
 	void EventDebugPrint (IgniteEvent igniteEvent) 
 	{
-
-
 
 		string label = "Id";
 		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Id);
@@ -84,6 +105,7 @@ public class FuelManager : MonoBehaviour
 		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.State);
 		label = "Score";
 		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Score.ToString());
+
 		//label = "StartTime";
 		//ReduxGuiController.Instance.addLabelAndDateTimeToWindow (label, igniteEvent.StartTime);
 		//label = "EndTime";
@@ -92,37 +114,33 @@ public class FuelManager : MonoBehaviour
 		//label = "Special Character";
 		//ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Metadata.SpecialCharacterId.ToString());
 
-		if (igniteEvent.ComingSoon == true) {
-			label = "Starting In";
-			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingStartTimeShortString);
+		//if (igniteEvent.ComingSoon == true) {
+		//	label = "Starting In";
+		//	ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingStartTimeShortString);
 
-		} else {
-			label = "Ending In";
-			ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingEndTimeLongString);
+		//} else {
+		//	label = "Ending In";
+		//	ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.RemainingEndTimeLongString);
+		//
+		//}
 
-		}
+	}
 
-
-		//FuelSDK.GetMission (igniteEvent.Id);
-
-
-
-
-		/*
-		//Rules are effectively Sub Missions
+	void MissionDebugPrint (IgniteMission igniteMission)
+	{
 		Dictionary<string,IgniteMissionRuleData> SubMissions = igniteMission.Rules;
 
 		if( SubMissions != null ) {
 			foreach( IgniteMissionRuleData missionRule in SubMissions.Values ) {
 
-				//label = "sub_" + missionRule.Id;
-				//ReduxGuiController.Instance.addLabelAndStringToWindow (label, missionRule.Progress.ToString());
+				string label = "sub_" + missionRule.Id;
+				ReduxGuiController.Instance.addLabelAndStringToWindow (label, missionRule.Progress.ToString());
 
 			}
 		}
-		*/
 
 	}
+		
 
 
 

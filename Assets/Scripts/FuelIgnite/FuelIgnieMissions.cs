@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using FuelSDKIntegration.Structures;
 
 
+//-----------------------------------------------------------------
+/*
+	  					IGNITE MISSIONS
+*/
+//-----------------------------------------------------------------
 public partial class FuelIgnite : MonoBehaviour
 {
-	//-----------------------------------------------------------------
-	/*
-	  							IGNITE MISSIONS
-	*/
-	//-----------------------------------------------------------------
 
 	void onFuelSDKIgniteMission(Dictionary<string, object> data)
 	{
@@ -44,8 +44,6 @@ public partial class FuelIgnite : MonoBehaviour
 		IgniteEvent igniteEvent = mIgniteEventsDictionary[missionDictionary["id"].ToString()];
 		if (igniteEvent != null) {
 			igniteEvent.LoadActivityData (missionDictionary);
-
-			ReduxGuiController.Instance.addLabelAndStringToWindow ("Loading Ativity", missionDictionary["id"].ToString());
 
 		} else {
 		

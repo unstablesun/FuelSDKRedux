@@ -5,14 +5,13 @@ using System.Collections.Generic;
 using FuelSDKIntegration.Structures;
 
 
+//-----------------------------------------------------------------
+/*
+	  				IGNITE PRIZES (virtual goods)
+*/
+//-----------------------------------------------------------------
 public partial class FuelIgnite : MonoBehaviour
 {
-	//-----------------------------------------------------------------
-	/*
-	  							IGNITE PRIZES (virtual goods)
-	*/
-	//-----------------------------------------------------------------
-
 
 	void onFuelSDKVirtualGoodList(Dictionary<string, object> data)
 	{
