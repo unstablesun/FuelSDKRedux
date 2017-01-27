@@ -77,9 +77,9 @@ namespace FuelSDKIntegration.Structures
 			base.Create( metadataDict );
 
 			if( metadataDict.ContainsKey( "virtualGood" ) ) {
-				Dictionary<string,object> virtualGoodDict = metadataDict["virtualGood"] as Dictionary<string,object>;
-				//this.VirtualGood = new VirtualGoodData();
-				//this.VirtualGood.Create( virtualGoodDict );
+				//Dictionary<string,object> virtualGoodDict = metadataDict["virtualGood"] as Dictionary<string,object>;
+				////this.VirtualGood = new VirtualGoodData();
+				////this.VirtualGood.Create( virtualGoodDict );
 			}
 		}
 	}

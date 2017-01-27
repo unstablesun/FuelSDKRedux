@@ -13,14 +13,16 @@ using FuelSDKIntegration.Structures;
 public partial class FuelIgnite : MonoBehaviour
 {
 
-
 	List<IgniteEvent> mIgniteEventList = new List<IgniteEvent> ();
+
+	List<IgniteSampleEvent> mIgniteSampleEventList = new List<IgniteSampleEvent> ();
 
 	Dictionary<string, IgniteEvent> mIgniteEventsDictionary = null;
 
 
 	public bool mIgniteLoaded = false;
 
+	//private bool mCharacterDataLoaded = false;
 
 	public static FuelIgnite Instance;
 	void Awake()
@@ -30,6 +32,8 @@ public partial class FuelIgnite : MonoBehaviour
 		mIgniteLoaded = false;
 
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "FuelIgnite Awake!");
+
+		Debug.Log ("REDUX LOG -------- FuelIgnite Awake!");
 	}
 	void OnDestroy() 
 	{
@@ -38,14 +42,35 @@ public partial class FuelIgnite : MonoBehaviour
 
 	void Start () 
 	{
-		GetEventsWithTags ();
+		//We need to wait for this event before we can call getEvents with character unlock filters
+		//EventDispatch.RegisterInterest("OnCharacterDataLoaded", this);
+		//EventDispatch.RegisterInterest("OnStoreInitialised", this);
+
+		Event_OnCharacterDataLoaded (0);
 	}
 
+	private void Event_OnCharacterDataLoaded(int numInSaveGame)
+	{
+		//mCharacterDataLoaded = true;
+
+		StartGetEventsCorroutine ();
+
+	}
+
+	private void Event_OnStoreInitialised()
+	{
+	}
+
+	void Update () 
+	{
+	}
 
 	void OnEnable()
 	{
 		FuelSDK.broadcastFuelSDKIgniteLoaded += onFuelSDKIgniteLoaded;
 
+
+		FuelSDK.broadcastFuelSDKIgniteSampleEvents += onFuelSDKIgniteSampleEvents;
 		FuelSDK.broadcastFuelSDKIgniteEvents += onFuelSDKIgniteEvents;
 		FuelSDK.broadcastFuelSDKIgniteMission += onFuelSDKIgniteMission;
 		FuelSDK.broadcastFuelSDKVirtualGoodList += onFuelSDKVirtualGoodList;
@@ -53,13 +78,14 @@ public partial class FuelIgnite : MonoBehaviour
 		FuelSDK.broadcastFuelSDKNotificationEnabled += onFuelSDKNotificationEnabled;
 		FuelSDK.broadcastFuelSDKNotificationDisabled += onFuelSDKNotificationDisabled;
 
-		FuelSDK.broadcastFuelSDKLastRequestFailed += onFuelSDKLastRequestFailed;
+		//FuelSDK.broadcastFuelSDKLastRequestFailed += onFuelSDKLastRequestFailed;
 	}
 
 	void OnDisable()
 	{
 		FuelSDK.broadcastFuelSDKIgniteLoaded -= onFuelSDKIgniteLoaded;
 
+		FuelSDK.broadcastFuelSDKIgniteSampleEvents -= onFuelSDKIgniteSampleEvents;
 		FuelSDK.broadcastFuelSDKIgniteEvents -= onFuelSDKIgniteEvents;
 		FuelSDK.broadcastFuelSDKIgniteMission -= onFuelSDKIgniteMission;
 		FuelSDK.broadcastFuelSDKVirtualGoodList -= onFuelSDKVirtualGoodList;
@@ -67,7 +93,7 @@ public partial class FuelIgnite : MonoBehaviour
 		FuelSDK.broadcastFuelSDKNotificationEnabled -= onFuelSDKNotificationEnabled;
 		FuelSDK.broadcastFuelSDKNotificationDisabled -= onFuelSDKNotificationDisabled;
 
-		FuelSDK.broadcastFuelSDKLastRequestFailed -= onFuelSDKLastRequestFailed;
+		//FuelSDK.broadcastFuelSDKLastRequestFailed -= onFuelSDKLastRequestFailed;
 	}
 
 	void onFuelSDKIgniteLoaded (Dictionary<string, object> data) 

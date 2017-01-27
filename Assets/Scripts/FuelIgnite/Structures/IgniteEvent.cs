@@ -204,25 +204,75 @@ namespace FuelSDKIntegration.Structures
 		}
 
 
-
-
-		public bool IsSpecialCharaterEvent {
+		public string EventCharacterName {
 			get {
-				if(Metadata.SpecialCharacterId > 0) {
-					return true;
-				}
-				return false;
+				return Metadata.EventCharacterName;
 			}
 		}
 
-		public int SpecialCharaterId {
+		public string PlayCharacterName {
 			get {
-				return Metadata.SpecialCharacterId;
+				return Metadata.PlayCharacterName;
 			}
 		}
 
+		public bool PlayCharacterEnabled {
+			get {
+				return Metadata.PlayCharacterEnabled;
+			}
+		}
 
 
 
 	}
+
+
+	public class IgniteSampleEvent 
+	{
+		public string Id { get; set; }
+		public string EventId { get; set; }
+		public IgniteEventType Type { get; set; }
+		public IgniteEventMetadata Metadata { get; set; }
+
+		public IgniteSampleEvent() {
+			this.Id = string.Empty;
+			this.Metadata = new IgniteEventMetadata();
+		}
+
+		public void Create ( Dictionary<string,object> eventDict ) {
+			if( eventDict.ContainsKey( "id" ) ) {
+				this.Id = Convert.ToString( eventDict["id"] );
+			}
+			if( eventDict.ContainsKey( "eventId" ) ) {
+				this.EventId = Convert.ToString( eventDict["eventId"] );
+			}
+			if( eventDict.ContainsKey( "type" ) ) {
+				this.Type = (IgniteEventType) Enum.Parse( typeof(IgniteEventType) , Convert.ToString( eventDict["type"] ) );
+			}
+			if( eventDict.ContainsKey( "metadata" ) ) {
+				Dictionary<string,object> eventMetadataDict = eventDict["metadata"] as Dictionary<string,object>;
+				this.Metadata = new IgniteEventMetadata();
+				this.Metadata.Create( eventMetadataDict );
+			}
+		}
+			
+		public string EventCharacterName {
+			get {
+				return Metadata.EventCharacterName;
+			}
+		}
+
+		public string PlayCharacterName {
+			get {
+				return Metadata.PlayCharacterName;
+			}
+		}
+
+		public bool PlayCharacterEnabled {
+			get {
+				return Metadata.PlayCharacterEnabled;
+			}
+		}
+	}
+
 }

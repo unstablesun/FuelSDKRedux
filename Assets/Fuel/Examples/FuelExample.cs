@@ -54,7 +54,7 @@ public class FuelExample : MonoBehaviour
 	private void Initialize()
 	{
 		m_listener = new FuelListenerExample (this);
-		FuelSDK.setListener (m_listener);
+		//FuelSDK.setListener (m_listener);
 	}
 
 	public void LaunchMultiplayer ()

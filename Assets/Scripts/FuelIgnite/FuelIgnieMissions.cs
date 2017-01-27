@@ -15,6 +15,8 @@ public partial class FuelIgnite : MonoBehaviour
 
 	void onFuelSDKIgniteMission(Dictionary<string, object> data)
 	{
+		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "FuelIgnite : onFuelSDKIgniteMission");
+
 		object missionObject;
 		bool keyExists = data.TryGetValue("mission", out missionObject);
 
@@ -36,11 +38,7 @@ public partial class FuelIgnite : MonoBehaviour
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid mission data type: " + missionObject.GetType ().Name + " error message : " + e.Message);
 			return;
 		}
-
-
-		//IgniteMission igniteMission = new IgniteMission ();
-		//igniteMission.Create (missionDictionary);
-
+			
 		IgniteEvent igniteEvent = mIgniteEventsDictionary[missionDictionary["id"].ToString()];
 		if (igniteEvent != null) {
 			igniteEvent.LoadActivityData (missionDictionary);

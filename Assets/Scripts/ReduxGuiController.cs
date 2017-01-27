@@ -61,7 +61,7 @@ public class ReduxGuiController : MonoBehaviour
 		
 	public void onGetEventsButtonClick () 
 	{
-		FuelManager.Instance.DisplayCurrentIgniteData ();
+		FuelManager.Instance.RequestEventData ();
 	}
 	public void onGetMissionsButtonClick () 
 	{
@@ -71,6 +71,10 @@ public class ReduxGuiController : MonoBehaviour
 	public void onDisplayMissionDataButtonClick () 
 	{
 		FuelManager.Instance.DisplayCurrentMissionData ();
+	}
+	public void onDisplayEventDataButtonClick () 
+	{
+		FuelManager.Instance.DisplayCurrentIgniteData ();
 	}
 
 		

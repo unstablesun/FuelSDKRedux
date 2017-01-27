@@ -6,12 +6,13 @@ namespace FuelSDKIntegration.Structures
 {
 	public class Metadata 
 	{
+		
 		private string name;
 		public string Name { 
 			get {
 				//return HemanLocalization.Instance.LocalizeText(name);
 
-				return "ToD0";
+				return name;
 			}
 			set {
 				name = value;

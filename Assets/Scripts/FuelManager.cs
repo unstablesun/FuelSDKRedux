@@ -27,7 +27,7 @@ public class FuelManager : MonoBehaviour
 	void Start () 
 	{
 
-		FuelIgnite.Instance.StartGetEventsCorroutine ();
+		//FuelIgnite.Instance.StartGetEventsCorroutine ();
 
 	}
 
@@ -52,6 +52,15 @@ public class FuelManager : MonoBehaviour
 	}
 
 	//triggered by ui button
+	public void RequestEventData() 
+	{
+		Debug.Log ("REDUX LOG -------- RequestEventData");
+
+		FuelIgnite.Instance.RequestEventData ();
+
+	}
+
+	//triggered by ui button
 	public void RequestMissionData() 
 	{
 
@@ -64,13 +73,24 @@ public class FuelManager : MonoBehaviour
 	{
 		
 		int numDisplayEvents = FuelIgnite.Instance.GetNumberOfActiveEvents ();
-
 		ReduxGuiController.Instance.addLabelAndStringToWindow ("Num Events Loaded", numDisplayEvents.ToString());
 
 		List<IgniteEvent> igniteEventList = FuelIgnite.Instance.GetActiveEventList;
 		for (int i = 0; i < igniteEventList.Count; i++) {
-			EventDebugPrint (igniteEventList[i]);
+			EventDebugPrint ("Filtered", igniteEventList[i]);
 		}
+
+		//List<IgniteEvent> igniteEvenSampletList = FuelIgnite.Instance.GetActiveEventList;
+		//for (int i = 0; i < igniteEventList.Count; i++) {
+		//	EventDebugPrint ("Filtered", igniteEventList[i]);
+		//}
+
+		List<IgniteSampleEvent> igniteSampleEventList = FuelIgnite.Instance.GetSampleEventList;
+		for (int i = 0; i < igniteEventList.Count; i++) {
+			SampleEventDebugPrint ("Samples", igniteSampleEventList[i]);
+		}
+
+			
 	}
 
 	//triggered by ui button
@@ -94,13 +114,15 @@ public class FuelManager : MonoBehaviour
 	}
 
 
-	void EventDebugPrint (IgniteEvent igniteEvent) 
+	void EventDebugPrint (string title, IgniteEvent igniteEvent) 
 	{
 
-		string label = "Id";
+		string label = title;
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, "data");
+		label = "Id";
 		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Id);
-		label = "EventId";
-		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.EventId);
+		label = "Name";
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Metadata.Name);
 		label = "State";
 		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.State);
 		label = "Score";
@@ -126,6 +148,17 @@ public class FuelManager : MonoBehaviour
 
 	}
 
+	void SampleEventDebugPrint (string title, IgniteSampleEvent igniteSampleEvent) 
+	{
+
+		string label = title;
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, "data");
+		label = "Id";
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteSampleEvent.Id);
+		label = "Name";
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteSampleEvent.Metadata.Name);
+	}
+
 	void MissionDebugPrint (IgniteMission igniteMission)
 	{
 		Dictionary<string,IgniteMissionRuleData> SubMissions = igniteMission.Rules;
@@ -138,6 +171,38 @@ public class FuelManager : MonoBehaviour
 
 			}
 		}
+
+	}
+
+
+
+	void GetEventButtonInfo ()
+	{
+		/*
+		Dictionary<string, object> eventButtonData = FuelIgnite.Instance.GetEventButtonData();
+
+		if (eventButtonData.ContainsKey ("error")) {
+			ReduxGuiController.Instance.addLabelAndStringToWindow ("error", "no events");
+
+		} else {
+		
+
+			if (eventButtonData.ContainsKey ("EventName")) {
+				
+				ReduxGuiController.Instance.addLabelAndStringToWindow ("EventName", eventButtonData["EventName"].ToString());
+			}
+			if (eventButtonData.ContainsKey ("SpecialCharacterId")) {
+
+				ReduxGuiController.Instance.addLabelAndStringToWindow ("SpecialCharacterId", eventButtonData["SpecialCharacterId"].ToString());
+			}
+			if (eventButtonData.ContainsKey ("EndTime")) {
+
+				ReduxGuiController.Instance.addLabelAndStringToWindow ("SpecialCharacterId", eventButtonData["EndTime"].ToString());
+			}
+		}
+		*/
+
+			
 
 	}
 		

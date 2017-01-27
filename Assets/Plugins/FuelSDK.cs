@@ -15,7 +15,7 @@ public class FuelSDK : MonoBehaviour {
 		portrait,
 		auto
 	}
-	
+
 	public enum NotificationType
 	{
 		none 	= 0x0,
@@ -88,7 +88,7 @@ public class FuelSDK : MonoBehaviour {
 	#endregion
 
 	#region ===================================== Editor Variables =====================================
-	
+
 	public string GameKey;
 	public string GameSecret;
 	public ContentOrientation Orientation = ContentOrientation.landscape;
@@ -116,7 +116,23 @@ public class FuelSDK : MonoBehaviour {
 
 	private static FuelSDKPlatform platformSelected;
 	private static bool m_bInitialized;
-	private static FuelSDKListener m_listener;
+	//private static FuelSDKListener m_listener;
+
+	public static bool IsIgniteEnabled {
+		get {
+			return m_IgniteEnabled;
+		}
+	}
+
+	private static bool m_IgniteEnabled;
+
+	public static bool IsCompeteEnabled {
+		get {
+			return m_CompeteEnabled;
+		}
+	}
+
+	private static bool m_CompeteEnabled;
 
 	#endregion
 
@@ -125,12 +141,12 @@ public class FuelSDK : MonoBehaviour {
 	void Start() {
 		if (!m_bInitialized) {
 			GameObject.DontDestroyOnLoad (gameObject);
-			
+
 			if (!Application.isEditor) {
 				bool gameHandleLogin = false;
 				bool gameHandleInvite = false;
 				bool gameHandleShare = false;
-				
+
 				#if UNITY_IOS
 				gameHandleLogin = iOSGameHandleLogin;
 				gameHandleInvite = iOSGameHandleInvite;
@@ -140,43 +156,45 @@ public class FuelSDK : MonoBehaviour {
 				gameHandleInvite = AndroidGameHandleInvite;
 				gameHandleShare = AndroidGameHandleShare;				
 				#endif
-				
+
 				GetFuelSDKPlatform().Initialize(GameKey, GameSecret, gameHandleLogin, gameHandleInvite, gameHandleShare);
 
 				if(CompeteEnabled) {
 					InitializeCompete();
 				}
-				
+
 				if(IgniteEnabled) {
 					InitializeIgnite();
 				}
-				
+
 				if(DynamicsEnabled) {
 					InitializeDynamics();
 				}
-				
+
 				GetFuelSDKPlatform().SetNotificationIcon(AndroidNotificationIcon);
-				
+
 				GetFuelSDKPlatform().InitializeGCM(AndroidGCMSenderID);
 
 			}
 
 			m_bInitialized = true;
+			m_IgniteEnabled = IgniteEnabled;
+			m_CompeteEnabled = CompeteEnabled;
 		} else {
 			GameObject.Destroy (gameObject);	
 		}
-		
+
 		if (CompeteEnabled) {
 			InitializeCompeteUI();
 			SetOrientationUICompete (Orientation);
 		}
-		
+
 		if (IgniteEnabled) {
 			InitializeIgniteUI();
 			SetOrientationUIIgnite (Orientation);
 		}
 	}
-	
+
 	private void OnApplicationPause (bool paused)
 	{
 		if (!Application.isEditor) {
@@ -186,9 +204,9 @@ public class FuelSDK : MonoBehaviour {
 				GetFuelSDKPlatform().OnResume();
 			}
 		}
-		
+
 	}
-	
+
 	private void OnApplicationQuit ()
 	{
 		if (!Application.isEditor) {
@@ -299,7 +317,7 @@ public class FuelSDK : MonoBehaviour {
 	public static void DisableNotification (NotificationType notificationType)
 	{
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "disabling notification type: " + notificationType.ToString ());
-		
+
 		if (!Application.isEditor) {
 			GetFuelSDKPlatform().DisableNotification(notificationType);
 		}
@@ -310,7 +328,7 @@ public class FuelSDK : MonoBehaviour {
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "validating if notification type '" + notificationType.ToString () + "' is enabled");
 
 		bool succeed = false;
-		
+
 		if (!Application.isEditor) {
 			succeed = GetFuelSDKPlatform().IsNotificationEnabled(notificationType);
 		}
@@ -378,7 +396,7 @@ public class FuelSDK : MonoBehaviour {
 	}
 
 	#endregion
-	
+
 	#region ===================================== Language =====================================
 
 	/// <summary>
@@ -402,7 +420,7 @@ public class FuelSDK : MonoBehaviour {
 	}
 
 	#endregion
-	
+
 	#region ===================================== Virtual Goods =====================================
 
 	/// <summary>
@@ -474,11 +492,11 @@ public class FuelSDK : MonoBehaviour {
 			return GetFuelSDKPlatform().AcknowledgeVirtualGoods(transactionId, acknowledgementTokensJSONString, consumed);
 		}
 
-        return false;
+		return false;
 	}
 
 	#endregion
-	
+
 	#region ===================================== Login =====================================
 
 	/// <summary>
@@ -499,7 +517,7 @@ public class FuelSDK : MonoBehaviour {
 	}
 
 	#endregion
-	
+
 	#region ===================================== Social =====================================
 
 	/// <summary>
@@ -520,7 +538,7 @@ public class FuelSDK : MonoBehaviour {
 	public static void SdkSocialShareCompleted ()
 	{
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "social share completed");
-		
+
 		if (!Application.isEditor) {
 			GetFuelSDKPlatform().SdkSocialShareCompleted();
 		}
@@ -528,7 +546,7 @@ public class FuelSDK : MonoBehaviour {
 
 
 	#endregion
-	
+
 	#region ===================================== Compete =====================================
 
 	/// <summary>
@@ -541,7 +559,7 @@ public class FuelSDK : MonoBehaviour {
 			GetFuelSDKPlatform().InitializeCompete ();
 		}
 	}
-	
+
 	/// <summary>
 	/// Submits the results of the match. You must stuff the match result into a dictionary that will be parsed and passed to the SDK API servers..
 	/// Current parameters:
@@ -563,10 +581,10 @@ public class FuelSDK : MonoBehaviour {
 		}
 
 		bool succeeded = false;
-		
+
 		if (!Application.isEditor) {
 			JSONClass matchResultJSON = FuelSDKCommon.toJSONClass (matchResult);
-			
+
 			if (matchResultJSON == null) {
 				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "unable to coerce match result dictionary into a JSON class");
 			} else {
@@ -640,7 +658,7 @@ public class FuelSDK : MonoBehaviour {
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "launching the compete UI");
 
 		bool succeeded = false;
-		
+
 		if (!Application.isEditor) {
 			succeeded = GetFuelSDKPlatform().Launch();
 		}
@@ -649,7 +667,7 @@ public class FuelSDK : MonoBehaviour {
 	}
 
 	#endregion
-	
+
 	#region ===================================== Ignite =====================================
 
 	/// <summary>
@@ -669,7 +687,7 @@ public class FuelSDK : MonoBehaviour {
 	/// <param name="parameters">Parameters.</param>
 	public static bool ExecMethod (string method, List<object> parameters) {
 		string parametersString = FuelSDKCommon.Serialize(parameters);
-		
+
 		if (method == null) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.WARN, "executing undefined method");
 		} else {
@@ -730,7 +748,7 @@ public class FuelSDK : MonoBehaviour {
 		} else {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "getting events with tags: " + eventTagsString);
 		}
-		
+
 		bool succeeded = false;
 
 		if (!Application.isEditor) {
@@ -761,7 +779,7 @@ public class FuelSDK : MonoBehaviour {
 
 		return succeeded;
 	}
-	
+
 	/// <summary>
 	/// Joins an event.
 	/// </summary>
@@ -775,11 +793,11 @@ public class FuelSDK : MonoBehaviour {
 		}
 
 		bool succeeded = false;
-		
+
 		if (!Application.isEditor) {
 			succeeded = GetFuelSDKPlatform().JoinEvent (eventID);
 		}
-		
+
 		return succeeded;
 	}
 
@@ -815,7 +833,7 @@ public class FuelSDK : MonoBehaviour {
 		} else {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "getting mission with mission ID: " + missionID);
 		}
-		
+
 		bool succeeded = false;
 
 		if (!Application.isEditor) {
@@ -836,7 +854,7 @@ public class FuelSDK : MonoBehaviour {
 		} else {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "getting quest with quest ID: " + questID);
 		}
-		
+
 		bool succeeded = false;
 
 		if (!Application.isEditor) {
@@ -857,16 +875,16 @@ public class FuelSDK : MonoBehaviour {
 		} else {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "getting offer with offer ID: " + offerID);
 		}
-		
+
 		bool succeeded = false;
-		
+
 		if (!Application.isEditor) {
 			succeeded = GetFuelSDKPlatform().GetOffer (offerID);
 		}
-		
+
 		return succeeded;
 	}
-	
+
 	/// <summary>
 	/// Accepts the offer.
 	/// </summary>
@@ -878,16 +896,16 @@ public class FuelSDK : MonoBehaviour {
 		} else {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "accepting offer with offer ID: " + offerID);
 		}
-		
+
 		bool succeeded = false;
-		
+
 		if (!Application.isEditor) {
 			succeeded = GetFuelSDKPlatform().AcceptOffer (offerID);
 		}
-		
+
 		return succeeded;
 	}
-	
+
 	//Ingnite UI
 
 	/// <summary>
@@ -907,7 +925,7 @@ public class FuelSDK : MonoBehaviour {
 	/// <param name="orientation">Orientation.</param>
 	public static void SetOrientationUIIgnite (ContentOrientation orientation) {
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "setting the ignite UI orientation: " + orientation.ToString ());
-		
+
 		if (!Application.isEditor) {
 			GetFuelSDKPlatform().SetOrientationUIIgnite (orientation);
 		}
@@ -920,7 +938,7 @@ public class FuelSDK : MonoBehaviour {
 	/// </summary>
 	public static void InitializeDynamics () {
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "initializing the dynamics product");
-		
+
 		if (!Application.isEditor) {
 			GetFuelSDKPlatform().InitializeDynamics ();
 		}
@@ -964,11 +982,11 @@ public class FuelSDK : MonoBehaviour {
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "synching user values");
 
 		bool succeeded = false;
-		
+
 		if (!Application.isEditor) {
 			succeeded = GetFuelSDKPlatform().SyncUserValues();
 		}
-		
+
 		return succeeded;
 	}
 
@@ -984,6 +1002,8 @@ public class FuelSDK : MonoBehaviour {
 	/// Sets the listener.
 	/// </summary>
 	/// <param name="listener">Listener.</param>
+	/// 
+	/*
 	public static void setListener(FuelSDKListener listener)
 	{
 		if (listener == null) {
@@ -994,7 +1014,7 @@ public class FuelSDK : MonoBehaviour {
 
 		m_listener = listener;
 	}
-
+	*/
 	/// <summary>
 	/// Clears all received notifications from the notification centre and unschedule any set
 	/// local notifications that haven't fired yet. iOS only. Unused by Android.
@@ -1027,7 +1047,6 @@ public class FuelSDK : MonoBehaviour {
 	private enum DataReceiverAction
 	{
 		none,
-		fuelSDKSocialLoginRequest,
 		fuelSDKSocialInviteRequest,
 		fuelSDKSocialShareRequest,
 		fuelSDKImplicitLaunchRequest,
@@ -1048,6 +1067,11 @@ public class FuelSDK : MonoBehaviour {
 	*/
 
 	//Events
+
+
+	//fuelSDKSocialLoginRequest
+	public delegate void protofuelSDKSocialLoginRequest(Dictionary<string, object> data);
+	public static event protofuelSDKSocialLoginRequest broadcastFuelSDKSocialLoginRequest;
 
 	//fuelSDKUserValues
 	public delegate void protofuelSDKUserValues(Dictionary<string, object> data);
@@ -1088,6 +1112,10 @@ public class FuelSDK : MonoBehaviour {
 	public delegate void protofuelSDKIgniteLoaded(Dictionary<string, object> data);
 	public static event protofuelSDKIgniteLoaded broadcastFuelSDKIgniteLoaded;
 
+	//fuelSDKIgniteSampleEvents
+	public delegate void protofuelSDKIgniteSampleEvents(Dictionary<string, object> data);
+	public static event protofuelSDKIgniteSampleEvents broadcastFuelSDKIgniteSampleEvents;
+
 	//fuelSDKIgniteEvents
 	public delegate void protofuelSDKIgniteEvents(Dictionary<string, object> data);
 	public static event protofuelSDKIgniteEvents broadcastFuelSDKIgniteEvents;
@@ -1109,16 +1137,13 @@ public class FuelSDK : MonoBehaviour {
 	public static event protofuelSDKUICompetedMatch broadcastFuelSDKUICompetedMatch;
 
 	//fuelSDKCompeteChallengeCount
-	public delegate void protofuelSDKCompeteChallengeCount(int count);
+	public delegate void protofuelSDKCompeteChallengeCount(Dictionary<string, object> data);
 	public static event protofuelSDKCompeteChallengeCount broadcastFuelSDKCompeteChallengeCount;
 
 	//fuelSDKCompeteTournamentInfo
 	public delegate void protofuelSDKCompeteTournamentInfo(Dictionary<string, string> data);
 	public static event protofuelSDKCompeteTournamentInfo broadcastFuelSDKCompeteTournamentInfo;
 
-	//fuelSDKCompeteTournamentInfo
-	public delegate void protofuelSDKLastRequestFailed(string errorMessage);
-	public static event protofuelSDKLastRequestFailed broadcastFuelSDKLastRequestFailed;
 
 	/// <summary>
 	/// Data Receiver
@@ -1131,17 +1156,20 @@ public class FuelSDK : MonoBehaviour {
 		//	return;
 		//}
 
+		Debug.Log ("FUEL DEBUG LOG ::: DataReceiver message = " + message);
+
+
+
 		if (message == null) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "received undefined message");
-			broadcastFuelSDKLastRequestFailed ("received undefined message");
 			return;
 		}
+
 
 		object messageObject = FuelSDKCommon.Deserialize (message);
 
 		if (messageObject == null) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "message could not be deserialized");
-			broadcastFuelSDKLastRequestFailed("message could not be deserialized");
 			return;
 		}
 
@@ -1153,13 +1181,11 @@ public class FuelSDK : MonoBehaviour {
 
 			if (messageDictionary == null) {
 				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, " message data type: " + messageObject.GetType ().Name);
-				broadcastFuelSDKLastRequestFailed(" message data type: " + messageObject.GetType ().Name);
 				return;
 			}
 
 		}catch(Exception e) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, " message data type: " + messageObject.GetType ().Name + " error message : " + e.Message);
-			broadcastFuelSDKLastRequestFailed(" message data type: " + messageObject.GetType ().Name + " error message : " + e.Message);
 			return;
 		}
 
@@ -1168,13 +1194,11 @@ public class FuelSDK : MonoBehaviour {
 
 		if (actionObject == null || keyExists == false) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "received undefined action for message: " + message);
-			broadcastFuelSDKLastRequestFailed("received undefined action for message: " + message);
 			return;
 		}
 
 		if (!(actionObject is string)) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid action data type: " + actionObject.GetType ().Name);
-			broadcastFuelSDKLastRequestFailed("invalid action data type: " + actionObject.GetType ().Name);
 			return;
 		}
 
@@ -1183,7 +1207,6 @@ public class FuelSDK : MonoBehaviour {
 
 		if (!FuelSDKCommon.TryParseEnum<DataReceiverAction> (action, out dataReceiverAction)) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "unsupported action: " + action);
-			broadcastFuelSDKLastRequestFailed("unsupported action: " + action);
 			return;
 		}
 
@@ -1192,7 +1215,6 @@ public class FuelSDK : MonoBehaviour {
 
 		if (dataObject == null || keyExists == false) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "no specific data in the response object for action: " + action);
-			broadcastFuelSDKLastRequestFailed("no specific data in the response object for action: " + action);
 			return;
 		}
 
@@ -1204,13 +1226,11 @@ public class FuelSDK : MonoBehaviour {
 
 			if (data == null) {
 				FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid data data type" + dataObject.GetType ().Name);
-				broadcastFuelSDKLastRequestFailed("invalid data data type" + dataObject.GetType ().Name);
 				return;
 			}
 
 		}catch(Exception e){
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid data data type" + dataObject.GetType ().Name + " error message : " + e.Message);
-			broadcastFuelSDKLastRequestFailed("invalid data data type" + dataObject.GetType ().Name + " error message : " + e.Message);
 			return;
 		}
 
@@ -1218,13 +1238,13 @@ public class FuelSDK : MonoBehaviour {
 
 		if (dataString == null) {
 			FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "data could not be serialized");
-			broadcastFuelSDKLastRequestFailed("data could not be serialized");
 			return;
 		}
 
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "received '" + action + "': " + dataString);
 
 
+		Debug.Log ("FUEL DEBUG LOG ::: DataReceiver Switch * dataReceiverAction = " + dataReceiverAction);
 
 		switch (dataReceiverAction) {
 		case DataReceiverAction.none:
@@ -1234,17 +1254,101 @@ public class FuelSDK : MonoBehaviour {
 			}
 		case DataReceiverAction.fuelSDKVirtualGoodList:
 			{
-				broadcastFuelSDKVirtualGoodList (data);
+				/*
+				object transactionIDObject;
+				keyExists = data.TryGetValue("transactionID", out transactionIDObject);
+
+				if (transactionIDObject == null || keyExists == false) {
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
+					break;
+				}
+
+				if (!(transactionIDObject is string)) {
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
+					break;
+				}
+
+				string transactionID = (string)transactionIDObject;
+
+
+				object virtualGoodsObject;
+				keyExists = data.TryGetValue("virtualGoods", out virtualGoodsObject);
+
+				if (virtualGoodsObject == null || keyExists == false) {
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected virtual goods list");
+					break;
+				}
+
+				List<object> virtualGoods = null;
+
+				try{
+
+					virtualGoods = virtualGoodsObject as List<object>;
+
+					if (virtualGoods == null) {
+						FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name);
+						break;
+					}
+
+				}catch(Exception e){
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid virtual goods list data type: " + virtualGoodsObject.GetType ().Name + " error message : " + e.Message);
+					break;
+				}
+				*/
+
+				if (broadcastFuelSDKVirtualGoodList != null) {
+					broadcastFuelSDKVirtualGoodList (data);
+				}
+
+				//m_listener.OnVirtualGoodList (transactionID, virtualGoods);
 				break;
 			}
 		case DataReceiverAction.fuelSDKVirtualGoodRollback:
 			{
-				broadcastFuelSDKVirtualGoodRollback (data);
+				/*
+				object transactionIDObject;
+				keyExists = data.TryGetValue("transactionID", out transactionIDObject);
+
+				if (transactionIDObject == null || keyExists == false) {
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
+					break;
+				}
+
+				if (!(transactionIDObject is string)) {
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
+					break;
+				}
+				*/
+
+				if (broadcastFuelSDKVirtualGoodRollback != null) {
+					broadcastFuelSDKVirtualGoodRollback (data);
+				}
+
+				//m_listener.OnVirtualGoodRollback ((string)transactionIDObject);
 				break;
 			}
 		case DataReceiverAction.fuelSDKVirtualGoodConsumeSuccess:
 			{
-				broadcastFuelSDKVirtualGoodConsumeSuccess (data);
+				/*
+				object transactionIDObject;
+				keyExists = data.TryGetValue("transactionID", out transactionIDObject);
+
+				if (transactionIDObject == null || keyExists == false) {
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "missing expected transaction ID");
+					break;
+				}
+
+				if (!(transactionIDObject is string)) {
+					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid transaction ID data type: " + transactionIDObject.GetType ().Name);
+					break;
+				}
+				*/
+
+				if (broadcastFuelSDKVirtualGoodConsumeSuccess != null) {
+					broadcastFuelSDKVirtualGoodConsumeSuccess (data);
+				}
+
+				//m_listener.OnVirtualGoodConsumeSuccess ((string)transactionIDObject);
 				break;	
 			}
 		case DataReceiverAction.fuelSDKNotificationEnabled:
@@ -1271,7 +1375,9 @@ public class FuelSDK : MonoBehaviour {
 				}
 				*/
 
-				broadcastFuelSDKNotificationEnabled (data);
+				if (broadcastFuelSDKNotificationEnabled != null) {
+					broadcastFuelSDKNotificationEnabled (data);
+				}
 
 				//m_listener.OnNotificationEnabled ((NotificationType)notificationTypeValue);
 				break;
@@ -1299,13 +1405,16 @@ public class FuelSDK : MonoBehaviour {
 					break;
 				}
 				*/
-				broadcastFuelSDKNotificationDisabled (data);
+				if (broadcastFuelSDKNotificationDisabled != null) {
+					broadcastFuelSDKNotificationDisabled (data);
+				}
 
 				//m_listener.OnNotificationDisabled ((NotificationType)notificationTypeValue);
 				break;
 			}
 		case DataReceiverAction.fuelSDKSocialLoginRequest:
 			{
+				/*
 				object allowCacheObject;
 				keyExists = data.TryGetValue("allowCache", out allowCacheObject);
 
@@ -1320,8 +1429,12 @@ public class FuelSDK : MonoBehaviour {
 				}
 
 				bool allowCache = (bool)allowCacheObject;
+				*/
 
-				//m_listener.OnSocialLogin (allowCache);
+				if (broadcastFuelSDKSocialLoginRequest != null) {
+					broadcastFuelSDKSocialLoginRequest (data);
+				}
+
 				break;
 			}
 		case DataReceiverAction.fuelSDKSocialInviteRequest:
@@ -1409,13 +1522,14 @@ public class FuelSDK : MonoBehaviour {
 				}
 				*/
 
-				broadcastFuelSDKUserValues (data);
-
-				//m_listener.OnUserValues (FuelSDKCommon.ToStringDictionary<string, object> (conditions), FuelSDKCommon.ToStringDictionary<string, object> (variables));
+				if (broadcastFuelSDKUserValues != null) {
+					broadcastFuelSDKUserValues (data);
+				}
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteChallengeCount:
 			{
+				/*
 				object countObject;
 				keyExists = data.TryGetValue("count", out countObject);
 
@@ -1430,28 +1544,32 @@ public class FuelSDK : MonoBehaviour {
 				}
 
 				int count = (int)((long)countObject);
+				*/
 
-				broadcastFuelSDKCompeteChallengeCount (count);
-
-				//m_listener.OnCompeteChallengeCount (count);
+				if (broadcastFuelSDKCompeteChallengeCount != null) {
+					broadcastFuelSDKCompeteChallengeCount (data);
+				}
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteTournamentInfo:
 			{
-				broadcastFuelSDKCompeteTournamentInfo (FuelSDKCommon.ToStringDictionary<string, object> (data));
-				//m_listener.OnCompeteTournamentInfo (FuelSDKCommon.ToStringDictionary<string, object> (data));
+				if (broadcastFuelSDKCompeteTournamentInfo != null) {
+					broadcastFuelSDKCompeteTournamentInfo (FuelSDKCommon.ToStringDictionary<string, object> (data));
+				}
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteUICompletedExit:
 			{
-				broadcastFuelSDKUICompetedExit ();
-				//m_listener.OnCompeteUICompletedWithExit ();
+				if (broadcastFuelSDKUICompetedExit != null) {
+					broadcastFuelSDKUICompetedExit ();
+				}
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteUICompletedMatch:
 			{
-				broadcastFuelSDKUICompetedMatch (data);
-				//m_listener.OnCompeteUICompletedWithMatch (data);
+				if (broadcastFuelSDKUICompetedMatch != null) {
+					broadcastFuelSDKUICompetedMatch (data);
+				}
 				break;
 			}
 		case DataReceiverAction.fuelSDKCompeteUICompletedFail:
@@ -1471,7 +1589,9 @@ public class FuelSDK : MonoBehaviour {
 
 				string reason = (string)reasonObject;
 
-				broadcastFuelSDKUICompetedFail (reason);
+				if (broadcastFuelSDKUICompetedFail != null) {
+					broadcastFuelSDKUICompetedFail (reason);
+				}
 
 				//m_listener.OnCompeteUIFailed (reason);
 				break;
@@ -1482,7 +1602,9 @@ public class FuelSDK : MonoBehaviour {
 					break;
 				}
 
-				broadcastFuelSDKIgniteEvents (data);
+				if (broadcastFuelSDKIgniteEvents != null) {
+					broadcastFuelSDKIgniteEvents (data);
+				}
 
 				/*
 				object eventsObject;
@@ -1513,10 +1635,16 @@ public class FuelSDK : MonoBehaviour {
 			}
 		case DataReceiverAction.fuelSDKIgniteSampleEvents:
 			{
+
 				if (!validateDataReceived (dataReceiverAction, data)) {
 					break;
 				}
 
+				if (broadcastFuelSDKIgniteSampleEvents != null) {
+					broadcastFuelSDKIgniteSampleEvents (data);
+				}
+
+				/*
 				object eventsObject;
 				keyExists = data.TryGetValue("events", out eventsObject);
 
@@ -1539,11 +1667,11 @@ public class FuelSDK : MonoBehaviour {
 					FuelSDKCommon.Log (FuelSDKCommon.LogLevel.ERROR, "invalid event list data type: " + eventsObject.GetType ().Name + " error message : " + e.Message);
 					break;
 				}
-
+				*/
 				//m_listener.OnIgniteSampleEvents (events);
 				break;
 			}
-		case DataReceiverAction.fuelSDKIgniteLeaderBoard:
+					case DataReceiverAction.fuelSDKIgniteLeaderBoard:
 			{
 				if (!validateDataReceived (dataReceiverAction, data)) {
 					break;
@@ -1579,8 +1707,10 @@ public class FuelSDK : MonoBehaviour {
 				if (!validateDataReceived (dataReceiverAction, data)) {
 					break;
 				}
-					
-				broadcastFuelSDKIgniteMission (data);
+
+				if (broadcastFuelSDKIgniteMission != null) {
+					broadcastFuelSDKIgniteMission (data);
+				}
 
 				/*
 				object missionObject;
@@ -1678,6 +1808,7 @@ public class FuelSDK : MonoBehaviour {
 			}
 		case DataReceiverAction.fuelSDKIgniteAcceptOffer:
 			{
+				/*
 				if (!validateDataReceived (dataReceiverAction, data))
 				{
 					break;
@@ -1712,12 +1843,14 @@ public class FuelSDK : MonoBehaviour {
 				}
 
 				bool accepted = (bool)acceptedObject;
+*/
 
 				//m_listener.OnIgniteAcceptOffer (offerID, accepted);
 				break;
 			}
 		case DataReceiverAction.fuelSDKIgniteJoinEvent:
 			{
+				/*
 				if (!validateDataReceived (dataReceiverAction, data)) {
 					break;
 				}
@@ -1751,7 +1884,7 @@ public class FuelSDK : MonoBehaviour {
 				}
 
 				bool joinStatus = (bool)joinStatusObject;
-
+				*/
 				//m_listener.OnIgniteJoinEvent (eventID, joinStatus);
 				break;
 			}
@@ -1808,20 +1941,23 @@ public class FuelSDK : MonoBehaviour {
 
 		case DataReceiverAction.fuelSDKIgniteLoaded:
 			{
-				broadcastFuelSDKIgniteLoaded (data);
-				//m_listener.OnIgniteEngineLoaded(data);
+				if (broadcastFuelSDKIgniteLoaded != null) {
+					broadcastFuelSDKIgniteLoaded (data);
+				}
 				break;
 			}
 		case DataReceiverAction.fuelSDKDynamicsLoaded:
 			{
-				broadcastFuelSDKDynamicsLoaded (data);
-				//m_listener.OnDynamicsEngineLoaded(data);
+				if (broadcastFuelSDKDynamicsLoaded != null) {
+					broadcastFuelSDKDynamicsLoaded (data);
+				}
 				break;
 			}
 		case DataReceiverAction.fuelSDKServerAPIStatusUpdated:
 			{
-				broadcastFuelSDKServerAPIStatusUpdated (data);
-				//m_listener.OnServerAPIStatusUpdated(data);
+				if (broadcastFuelSDKServerAPIStatusUpdated != null) {
+					broadcastFuelSDKServerAPIStatusUpdated (data);
+				}
 				break;
 			}
 		default:
@@ -1871,7 +2007,7 @@ public class FuelSDK : MonoBehaviour {
 
 		return success;
 	}
-		
+
 	#endregion
 
 }
