@@ -5,7 +5,8 @@ namespace FuelSDKIntegration.Structures
 {
 	public class IgniteMissionMetadata:IgniteActivityMetadata 
 	{
-		public string GameData { get; set; }
+
+		//TODO: virtual good information for the overall mission comes in here
 
 		public IgniteMissionMetadata() {
 		}
@@ -13,9 +14,6 @@ namespace FuelSDKIntegration.Structures
 		public override void Create ( Dictionary<string,object> metadataDict ) {
 			base.Create( metadataDict );
 
-			if( metadataDict.ContainsKey( "gamedata" ) ) {
-				this.GameData = Convert.ToString( metadataDict["gamedata"] );
-			}
 		}
 	}
 }

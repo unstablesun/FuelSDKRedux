@@ -85,10 +85,10 @@ public class FuelManager : MonoBehaviour
 		//	EventDebugPrint ("Filtered", igniteEventList[i]);
 		//}
 
-		List<IgniteSampleEvent> igniteSampleEventList = FuelIgnite.Instance.GetSampleEventList;
-		for (int i = 0; i < igniteEventList.Count; i++) {
-			SampleEventDebugPrint ("Samples", igniteSampleEventList[i]);
-		}
+		//List<IgniteEvent> igniteSampleEventList = FuelIgnite.Instance.GetEventList;
+		//for (int i = 0; i < igniteEventList.Count; i++) {
+		//	SampleEventDebugPrint ("Samples", igniteSampleEventList[i]);
+		//}
 
 			
 	}
@@ -148,15 +148,15 @@ public class FuelManager : MonoBehaviour
 
 	}
 
-	void SampleEventDebugPrint (string title, IgniteSampleEvent igniteSampleEvent) 
+	void SampleEventDebugPrint (string title, IgniteEvent igniteEvent) 
 	{
 
 		string label = title;
 		ReduxGuiController.Instance.addLabelAndStringToWindow (label, "data");
 		label = "Id";
-		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteSampleEvent.Id);
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Id);
 		label = "Name";
-		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteSampleEvent.Metadata.Name);
+		ReduxGuiController.Instance.addLabelAndStringToWindow (label, igniteEvent.Metadata.Name);
 	}
 
 	void MissionDebugPrint (IgniteMission igniteMission)

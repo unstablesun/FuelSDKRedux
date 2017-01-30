@@ -21,9 +21,9 @@ public partial class FuelIgnite : MonoBehaviour
 	//--------------------------------------------------------------------
 	public List<IgniteEvent> GetActiveEventList {
 		get {
-			#if UNITY_EDITOR
+			#if NOT_TESTBED
 
-			//mIgniteEventList = TestFuelSDK.GetTestEventList();
+			mIgniteEventList = TestFuelSDK.GetTestEventList();
 
 
 			#endif
@@ -36,9 +36,9 @@ public partial class FuelIgnite : MonoBehaviour
 	}
 
 	public IgniteEvent GetActiveEvent(){
-		#if UNITY_EDITOR
+		#if NOT_TESTBED
 
-		//mIgniteEventList = TestFuelSDK.GetTestEventList();
+		mIgniteEventList = TestFuelSDK.GetTestEventList();
 
 
 		#endif
@@ -59,21 +59,6 @@ public partial class FuelIgnite : MonoBehaviour
 	}
 
 
-	public List<IgniteSampleEvent> GetSampleEventList {
-		get {
-			#if UNITY_EDITOR
-
-			//mIgniteEventList = TestFuelSDK.GetTestEventList();
-
-
-			#endif
-
-			if( mIgniteSampleEventList == null ||  mIgniteSampleEventList.Count == 0 ) {
-				return null;
-			}
-			return mIgniteSampleEventList;
-		}
-	}
 
 
 
@@ -82,15 +67,15 @@ public partial class FuelIgnite : MonoBehaviour
 
 	public void GetEventsWithTags()
 	{
-		Debug.Log ("REDUX LOG -------- GetEventsWithTags");
-
-		Debug.Log ("GetEventsWithTags");
+		ResetEventsRecieved ();
 
 		List<object> eventFiltertags = GetEventFilterTags();
 		FuelSDK.GetEvents (eventFiltertags);
 
-		List<object> sampleEventFiltertags = GetSampleEventFilterTags ();
+		List<object> sampleEventFiltertags = GetSampleEventFilterTags();
 		FuelSDK.GetSampleEvents (sampleEventFiltertags);
+
+		StartCreateEventListCoroutine ();
 	}
 
 
@@ -112,6 +97,29 @@ public partial class FuelIgnite : MonoBehaviour
 
 
 
+	//Create Event List Coroutine
+	private IEnumerator createEventListCoroutine;
+	public void StartCreateEventListCoroutine()
+	{
+		createEventListCoroutine = createEventList ();
+		StartCoroutine (createEventListCoroutine);
+	}
+
+	public IEnumerator createEventList()
+	{
+		while( mIgniteEventsRecieved == false ){
+			yield return null;
+		}
+
+		while( mIgniteSampleEventsRecieved == false ){
+			yield return null;
+		}
+
+		FactorInSampleEvents();
+		CreateSortedEventList ();
+		ResetEventsRecieved ();
+	}
+
 
 
 
@@ -124,10 +132,7 @@ public partial class FuelIgnite : MonoBehaviour
 
 	public void RequestEventData()
 	{
-		Debug.Log ("REDUX LOG -------- RequestEventData");
-		//WaitAndGetEvents (0f);
-
-		StartGetEventsCorroutine ();
+		WaitAndGetEvents (0f);
 	}
 
 	public void RequestMissionEventData(string MissionId)

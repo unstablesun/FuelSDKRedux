@@ -41,11 +41,13 @@ public partial class FuelIgnite : MonoBehaviour
 
 		foreach (object eventObj in sampleEventList) {
 
-			IgniteSampleEvent igniteSampleEvent = new IgniteSampleEvent ();
+			IgniteEvent igniteSampleEvent = new IgniteEvent ();
 			igniteSampleEvent.Create (eventObj as Dictionary<string,object>);
 
 			mIgniteSampleEventList.Add (igniteSampleEvent);
 		}
+
+		mIgniteSampleEventsRecieved = true;
 	}
 
 
@@ -79,22 +81,17 @@ public partial class FuelIgnite : MonoBehaviour
 		}
 
 
-		mIgniteEventList = new List<IgniteEvent> ();
-
 
 		foreach (object eventObj in eventList) {
 
 			IgniteEvent igniteEvent = new IgniteEvent ();
 			igniteEvent.Create (eventObj as Dictionary<string,object>);
 
-			mIgniteEventList.Add (igniteEvent);
 			mIgniteEventsDictionary [igniteEvent.Id] = igniteEvent;
 
 		}
-
-		//temp
-		RequestAllMissionEventData ();
 			
+		mIgniteEventsRecieved = true;
 	}
 
 
@@ -202,8 +199,24 @@ public partial class FuelIgnite : MonoBehaviour
 		
 		List<object> eventFilterTags = new List<object>();
 
-		#if NOT_TESTBED
 		//add character unlocks
+		#if REDUX_TESTBED
+
+		//test filter A
+		string characterCohort = "unlocked_character_sonic";
+		eventFilterTags.Add (characterCohort);
+		characterCohort = "unlocked_character_tails";
+		eventFilterTags.Add (characterCohort);
+		characterCohort = "locked_character_knuckles";
+		eventFilterTags.Add (characterCohort);
+		characterCohort = "locked_character_amy";
+		eventFilterTags.Add (characterCohort);
+		characterCohort = "locked_character_shadow";
+		eventFilterTags.Add (characterCohort);
+		characterCohort = "locked_character_blaze";
+		eventFilterTags.Add (characterCohort);
+
+		#else
 		int characterTypeLength = Utils.GetEnumCount<Characters.Type>();
 
 		for (int c = 0; c < characterTypeLength; c++) {
@@ -219,17 +232,9 @@ public partial class FuelIgnite : MonoBehaviour
 				eventFilterTags.Add (characterLockCohort);
 			
 			}
-
 		}
 		#endif
 
-
-
-		string characterCohort = "unlocked_character_sonic";
-		eventFilterTags.Add (characterCohort);
-
-		characterCohort = "locked_character_tails";
-		eventFilterTags.Add (characterCohort);
 
 
 		return eventFilterTags;
@@ -239,46 +244,150 @@ public partial class FuelIgnite : MonoBehaviour
 
 		List<object> eventFilterTags = new List<object>();
 
-		#if NOT_TESTBED
-		//add character unlocks
-		int characterTypeLength = Utils.GetEnumCount<Characters.Type>();
+		//example: for any sequence 1-unlocked 2-locked add another sequence 2-unlocked 3-locked (if 3 is locked)
+		//this will query for the next locked event
 
-		for (int c = 0; c < characterTypeLength; c++) {
+		#if REDUX_TESTBED
 
-		if (Characters.CharacterUnlocked ((Characters.Type)c)) {
-
-		string characterUnlockCohort = "unlocked_" + Characters.IDStrings [c];
-		eventFilterTags.Add (characterUnlockCohort);
-
-		} else {
-
-		string characterLockCohort = "locked_" + Characters.IDStrings [c];
-		eventFilterTags.Add (characterLockCohort);
-
-		}
-
-		}
-		#endif
-
-
-
-		//string characterCohort = "unlocked_character_sonic";
-		//eventFilterTags.Add (characterCohort);
-
-		//characterCohort = "locked_character_tails";
-		//eventFilterTags.Add (characterCohort);
-
-		//Query - will return just the locked events
-		string characterCohort = "unlocked_character_tails";
+		//test filter A
+		string characterCohort = "unlocked_character_sonic";
 		eventFilterTags.Add (characterCohort);
-
+		characterCohort = "unlocked_character_tails";
+		eventFilterTags.Add (characterCohort);
 		characterCohort = "locked_character_knuckles";
 		eventFilterTags.Add (characterCohort);
+		characterCohort = "locked_character_amy";
+		eventFilterTags.Add (characterCohort);
+		characterCohort = "locked_character_shadow";
+		eventFilterTags.Add (characterCohort);
+		characterCohort = "locked_character_blaze";
+		eventFilterTags.Add (characterCohort);
+
+		characterCohort = "unlocked_character_knuckles";
+		eventFilterTags.Add (characterCohort);
+
+
+		#else
+
+		int characterCount = Utils.GetEnumCount<Characters.Type>();
+		bool[]	character_unlockState = new bool[characterCount];
+
+		for (int c = 0; c < characterCount; c++) {
+
+			if (Characters.CharacterUnlocked ((Characters.Type)c)) {
+				character_unlockState [c] = true;
+			} else {
+				character_unlockState [c] = false;
+			}
+		}
+
+		//add initial character unlocks
+		for (int c = 0; c < characterCount; c++) {
+
+			if (character_unlockState[c] == true) {
+
+				string characterUnlockCohort = "unlocked_" + Characters.IDStrings [c];
+				eventFilterTags.Add (characterUnlockCohort);
+
+			} else {
+
+				string characterLockCohort = "locked_" + Characters.IDStrings [c];
+				eventFilterTags.Add (characterLockCohort);
+
+			}
+		}
+
+		//add additional character locks
+		for (int c = 0; c < characterCount - 3; c++) {
+
+			if (character_unlockState[c] == true && character_unlockState[c+1] == false) { 
+
+				for (int k = c; k < characterCount - 3; k++) {
+
+					if (character_unlockState [c + 2] == false) {
+					
+						//item is locked see if there is a 
+
+
+					} else {
+					
+					}	
+
+				}
+				//string characterUnlockCohort = "unlocked_" + Characters.IDStrings [c+1];
+				//eventFilterTags.Add (characterUnlockCohort);
+
+			}
+		}
+
+		#endif
+
 
 		return eventFilterTags;
 	}
 
 
+
+	private void FactorInSampleEvents()
+	{
+		Debug.Log ("REDUX LOG - FactorInSampleEvents");
+
+		for (int e = 0; e < mIgniteSampleEventList.Count; e++) {  
+
+			IgniteEvent igniteEvent = mIgniteEventsDictionary[mIgniteSampleEventList[e].Id];
+
+			if (igniteEvent == null) {
+			
+				//sample event is not in list so add it
+				IgniteEvent igniteSampleEvent = mIgniteSampleEventList[e];
+
+				Debug.Log ("REDUX LOG - igniteSampleEvent.EventLocked = true");
+				igniteSampleEvent.EventLocked = true;
+				mIgniteEventsDictionary.Add (igniteSampleEvent.Id, igniteSampleEvent);
+				break;//just add 1 sample event? yes for now
+			}
+		}
+
+	}
+
+	private void CreateSortedEventList()
+	{
+		//Find first Character event
+		mIgniteEventList = new List<IgniteEvent> ();
+
+		foreach(IgniteEvent e in mIgniteEventsDictionary.Values){
+			if(e.IsCharacterEvent == true) {
+				mIgniteEventList.Add( e );
+			}
+		}
+
+		foreach(IgniteEvent e in mIgniteEventsDictionary.Values){
+			if(e.IsCharacterEvent == false && e.Active == true) {
+				mIgniteEventList.Add( e );
+			}
+		}
+
+		foreach(IgniteEvent e in mIgniteEventsDictionary.Values){
+			if(e.IsCharacterEvent == false && e.Active == true) {
+				mIgniteEventList.Add( e );
+			}
+		}
+
+		foreach(IgniteEvent e in mIgniteEventsDictionary.Values){
+			if(e.IsCharacterEvent == false && e.Ended == true) {
+				mIgniteEventList.Add( e );
+			}
+		}
+
+		foreach(IgniteEvent e in mIgniteEventsDictionary.Values){
+			if(e.IsCharacterEvent == false && e.ComingSoon == true) {
+				mIgniteEventList.Add( e );
+			}
+		}
+
+	}
+		
+		
 
 
 }

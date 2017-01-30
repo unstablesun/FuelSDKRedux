@@ -12,13 +12,13 @@ using FuelSDKIntegration.Structures;
 //-----------------------------------------------------------------
 public partial class FuelIgnite : MonoBehaviour
 {
-
 	List<IgniteEvent> mIgniteEventList = new List<IgniteEvent> ();
-
-	List<IgniteSampleEvent> mIgniteSampleEventList = new List<IgniteSampleEvent> ();
+	List<IgniteEvent> mIgniteSampleEventList = new List<IgniteEvent> ();
 
 	Dictionary<string, IgniteEvent> mIgniteEventsDictionary = null;
 
+	private bool mIgniteEventsRecieved = false;
+	private bool mIgniteSampleEventsRecieved = false;
 
 	public bool mIgniteLoaded = false;
 
@@ -32,8 +32,6 @@ public partial class FuelIgnite : MonoBehaviour
 		mIgniteLoaded = false;
 
 		FuelSDKCommon.Log (FuelSDKCommon.LogLevel.DEBUG, "FuelIgnite Awake!");
-
-		Debug.Log ("REDUX LOG -------- FuelIgnite Awake!");
 	}
 	void OnDestroy() 
 	{
@@ -46,7 +44,8 @@ public partial class FuelIgnite : MonoBehaviour
 		//EventDispatch.RegisterInterest("OnCharacterDataLoaded", this);
 		//EventDispatch.RegisterInterest("OnStoreInitialised", this);
 
-		Event_OnCharacterDataLoaded (0);
+		StartGetEventsCorroutine ();
+
 	}
 
 	private void Event_OnCharacterDataLoaded(int numInSaveGame)
@@ -61,8 +60,22 @@ public partial class FuelIgnite : MonoBehaviour
 	{
 	}
 
+	private void ResetEventsRecieved()
+	{
+		mIgniteEventsRecieved = false;
+		mIgniteSampleEventsRecieved = false;
+
+	}
+
+
 	void Update () 
 	{
+		//if (mIgniteEventsRecieved == true && mIgniteSampleEventsRecieved == true) {
+		//	FactorInSampleEvents();
+		//	CreateSortedEventList ();
+		//	ResetEventsRecieved ();
+		//}
+
 	}
 
 	void OnEnable()
