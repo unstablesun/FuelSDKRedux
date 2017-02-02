@@ -27,7 +27,7 @@ public class FuelManager : MonoBehaviour
 	void Start () 
 	{
 
-		//FuelIgnite.Instance.StartGetEventsCorroutine ();
+		FuelIgnite.Instance.StartGetEventsCorroutine ();
 
 	}
 
@@ -56,7 +56,8 @@ public class FuelManager : MonoBehaviour
 	{
 		Debug.Log ("REDUX LOG -------- RequestEventData");
 
-		FuelIgnite.Instance.RequestEventData ();
+		//FuelIgnite.Instance.RequestEventData ();
+		FuelIgnite.Instance.StartGetEventsCorroutine ();
 
 	}
 
